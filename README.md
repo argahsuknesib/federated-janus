@@ -47,6 +47,7 @@ The sources are independently addressable abstractions. They currently execute i
 - explicit manual plans for join ordering, semijoins, and operator placement
 - per-plan and per-operator transfer accounting
 - semantic-equivalence checks across alternative physical plans
+- current Janus-QL query form using direct live/historical `WINDOW` blocks and top-level aggregation (no deprecated baseline clauses)
 
 There is intentionally **no automatic optimizer yet**. The current experiments establish when different manually selected plans reduce transferred bytes.
 

@@ -1,1006 +1,1407 @@
 PREFIX ex: <https://example.org/>
 
-FROM NAMED WINDOW ex:live1 ON STREAM <https://example.org/sensors/1/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history1 ON LOG <https://example.org/sensors/1/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live2 ON STREAM <https://example.org/sensors/2/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history2 ON LOG <https://example.org/sensors/2/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live3 ON STREAM <https://example.org/sensors/3/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history3 ON LOG <https://example.org/sensors/3/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live4 ON STREAM <https://example.org/sensors/4/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history4 ON LOG <https://example.org/sensors/4/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live5 ON STREAM <https://example.org/sensors/5/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history5 ON LOG <https://example.org/sensors/5/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live6 ON STREAM <https://example.org/sensors/6/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history6 ON LOG <https://example.org/sensors/6/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live7 ON STREAM <https://example.org/sensors/7/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history7 ON LOG <https://example.org/sensors/7/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live8 ON STREAM <https://example.org/sensors/8/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history8 ON LOG <https://example.org/sensors/8/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live9 ON STREAM <https://example.org/sensors/9/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history9 ON LOG <https://example.org/sensors/9/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live10 ON STREAM <https://example.org/sensors/10/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history10 ON LOG <https://example.org/sensors/10/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live11 ON STREAM <https://example.org/sensors/11/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history11 ON LOG <https://example.org/sensors/11/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live12 ON STREAM <https://example.org/sensors/12/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history12 ON LOG <https://example.org/sensors/12/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live13 ON STREAM <https://example.org/sensors/13/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history13 ON LOG <https://example.org/sensors/13/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live14 ON STREAM <https://example.org/sensors/14/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history14 ON LOG <https://example.org/sensors/14/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live15 ON STREAM <https://example.org/sensors/15/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history15 ON LOG <https://example.org/sensors/15/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live16 ON STREAM <https://example.org/sensors/16/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history16 ON LOG <https://example.org/sensors/16/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live17 ON STREAM <https://example.org/sensors/17/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history17 ON LOG <https://example.org/sensors/17/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live18 ON STREAM <https://example.org/sensors/18/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history18 ON LOG <https://example.org/sensors/18/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live19 ON STREAM <https://example.org/sensors/19/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history19 ON LOG <https://example.org/sensors/19/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live20 ON STREAM <https://example.org/sensors/20/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history20 ON LOG <https://example.org/sensors/20/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live21 ON STREAM <https://example.org/sensors/21/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history21 ON LOG <https://example.org/sensors/21/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live22 ON STREAM <https://example.org/sensors/22/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history22 ON LOG <https://example.org/sensors/22/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live23 ON STREAM <https://example.org/sensors/23/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history23 ON LOG <https://example.org/sensors/23/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live24 ON STREAM <https://example.org/sensors/24/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history24 ON LOG <https://example.org/sensors/24/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live25 ON STREAM <https://example.org/sensors/25/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history25 ON LOG <https://example.org/sensors/25/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live26 ON STREAM <https://example.org/sensors/26/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history26 ON LOG <https://example.org/sensors/26/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live27 ON STREAM <https://example.org/sensors/27/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history27 ON LOG <https://example.org/sensors/27/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live28 ON STREAM <https://example.org/sensors/28/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history28 ON LOG <https://example.org/sensors/28/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live29 ON STREAM <https://example.org/sensors/29/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history29 ON LOG <https://example.org/sensors/29/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live30 ON STREAM <https://example.org/sensors/30/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history30 ON LOG <https://example.org/sensors/30/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live31 ON STREAM <https://example.org/sensors/31/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history31 ON LOG <https://example.org/sensors/31/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live32 ON STREAM <https://example.org/sensors/32/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history32 ON LOG <https://example.org/sensors/32/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live33 ON STREAM <https://example.org/sensors/33/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history33 ON LOG <https://example.org/sensors/33/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live34 ON STREAM <https://example.org/sensors/34/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history34 ON LOG <https://example.org/sensors/34/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live35 ON STREAM <https://example.org/sensors/35/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history35 ON LOG <https://example.org/sensors/35/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live36 ON STREAM <https://example.org/sensors/36/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history36 ON LOG <https://example.org/sensors/36/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live37 ON STREAM <https://example.org/sensors/37/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history37 ON LOG <https://example.org/sensors/37/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live38 ON STREAM <https://example.org/sensors/38/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history38 ON LOG <https://example.org/sensors/38/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live39 ON STREAM <https://example.org/sensors/39/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history39 ON LOG <https://example.org/sensors/39/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live40 ON STREAM <https://example.org/sensors/40/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history40 ON LOG <https://example.org/sensors/40/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live41 ON STREAM <https://example.org/sensors/41/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history41 ON LOG <https://example.org/sensors/41/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live42 ON STREAM <https://example.org/sensors/42/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history42 ON LOG <https://example.org/sensors/42/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live43 ON STREAM <https://example.org/sensors/43/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history43 ON LOG <https://example.org/sensors/43/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live44 ON STREAM <https://example.org/sensors/44/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history44 ON LOG <https://example.org/sensors/44/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live45 ON STREAM <https://example.org/sensors/45/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history45 ON LOG <https://example.org/sensors/45/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live46 ON STREAM <https://example.org/sensors/46/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history46 ON LOG <https://example.org/sensors/46/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live47 ON STREAM <https://example.org/sensors/47/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history47 ON LOG <https://example.org/sensors/47/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live48 ON STREAM <https://example.org/sensors/48/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history48 ON LOG <https://example.org/sensors/48/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live49 ON STREAM <https://example.org/sensors/49/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history49 ON LOG <https://example.org/sensors/49/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live50 ON STREAM <https://example.org/sensors/50/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history50 ON LOG <https://example.org/sensors/50/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live51 ON STREAM <https://example.org/sensors/51/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history51 ON LOG <https://example.org/sensors/51/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live52 ON STREAM <https://example.org/sensors/52/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history52 ON LOG <https://example.org/sensors/52/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live53 ON STREAM <https://example.org/sensors/53/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history53 ON LOG <https://example.org/sensors/53/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live54 ON STREAM <https://example.org/sensors/54/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history54 ON LOG <https://example.org/sensors/54/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live55 ON STREAM <https://example.org/sensors/55/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history55 ON LOG <https://example.org/sensors/55/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live56 ON STREAM <https://example.org/sensors/56/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history56 ON LOG <https://example.org/sensors/56/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live57 ON STREAM <https://example.org/sensors/57/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history57 ON LOG <https://example.org/sensors/57/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live58 ON STREAM <https://example.org/sensors/58/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history58 ON LOG <https://example.org/sensors/58/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live59 ON STREAM <https://example.org/sensors/59/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history59 ON LOG <https://example.org/sensors/59/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live60 ON STREAM <https://example.org/sensors/60/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history60 ON LOG <https://example.org/sensors/60/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live61 ON STREAM <https://example.org/sensors/61/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history61 ON LOG <https://example.org/sensors/61/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live62 ON STREAM <https://example.org/sensors/62/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history62 ON LOG <https://example.org/sensors/62/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live63 ON STREAM <https://example.org/sensors/63/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history63 ON LOG <https://example.org/sensors/63/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live64 ON STREAM <https://example.org/sensors/64/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history64 ON LOG <https://example.org/sensors/64/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live65 ON STREAM <https://example.org/sensors/65/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history65 ON LOG <https://example.org/sensors/65/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live66 ON STREAM <https://example.org/sensors/66/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history66 ON LOG <https://example.org/sensors/66/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live67 ON STREAM <https://example.org/sensors/67/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history67 ON LOG <https://example.org/sensors/67/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live68 ON STREAM <https://example.org/sensors/68/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history68 ON LOG <https://example.org/sensors/68/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live69 ON STREAM <https://example.org/sensors/69/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history69 ON LOG <https://example.org/sensors/69/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live70 ON STREAM <https://example.org/sensors/70/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history70 ON LOG <https://example.org/sensors/70/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live71 ON STREAM <https://example.org/sensors/71/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history71 ON LOG <https://example.org/sensors/71/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live72 ON STREAM <https://example.org/sensors/72/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history72 ON LOG <https://example.org/sensors/72/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live73 ON STREAM <https://example.org/sensors/73/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history73 ON LOG <https://example.org/sensors/73/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live74 ON STREAM <https://example.org/sensors/74/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history74 ON LOG <https://example.org/sensors/74/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live75 ON STREAM <https://example.org/sensors/75/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history75 ON LOG <https://example.org/sensors/75/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live76 ON STREAM <https://example.org/sensors/76/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history76 ON LOG <https://example.org/sensors/76/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live77 ON STREAM <https://example.org/sensors/77/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history77 ON LOG <https://example.org/sensors/77/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live78 ON STREAM <https://example.org/sensors/78/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history78 ON LOG <https://example.org/sensors/78/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live79 ON STREAM <https://example.org/sensors/79/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history79 ON LOG <https://example.org/sensors/79/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live80 ON STREAM <https://example.org/sensors/80/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history80 ON LOG <https://example.org/sensors/80/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live81 ON STREAM <https://example.org/sensors/81/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history81 ON LOG <https://example.org/sensors/81/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live82 ON STREAM <https://example.org/sensors/82/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history82 ON LOG <https://example.org/sensors/82/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live83 ON STREAM <https://example.org/sensors/83/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history83 ON LOG <https://example.org/sensors/83/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live84 ON STREAM <https://example.org/sensors/84/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history84 ON LOG <https://example.org/sensors/84/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live85 ON STREAM <https://example.org/sensors/85/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history85 ON LOG <https://example.org/sensors/85/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live86 ON STREAM <https://example.org/sensors/86/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history86 ON LOG <https://example.org/sensors/86/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live87 ON STREAM <https://example.org/sensors/87/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history87 ON LOG <https://example.org/sensors/87/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live88 ON STREAM <https://example.org/sensors/88/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history88 ON LOG <https://example.org/sensors/88/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live89 ON STREAM <https://example.org/sensors/89/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history89 ON LOG <https://example.org/sensors/89/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live90 ON STREAM <https://example.org/sensors/90/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history90 ON LOG <https://example.org/sensors/90/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live91 ON STREAM <https://example.org/sensors/91/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history91 ON LOG <https://example.org/sensors/91/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live92 ON STREAM <https://example.org/sensors/92/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history92 ON LOG <https://example.org/sensors/92/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live93 ON STREAM <https://example.org/sensors/93/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history93 ON LOG <https://example.org/sensors/93/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live94 ON STREAM <https://example.org/sensors/94/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history94 ON LOG <https://example.org/sensors/94/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live95 ON STREAM <https://example.org/sensors/95/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history95 ON LOG <https://example.org/sensors/95/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live96 ON STREAM <https://example.org/sensors/96/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history96 ON LOG <https://example.org/sensors/96/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live97 ON STREAM <https://example.org/sensors/97/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history97 ON LOG <https://example.org/sensors/97/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live98 ON STREAM <https://example.org/sensors/98/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history98 ON LOG <https://example.org/sensors/98/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live99 ON STREAM <https://example.org/sensors/99/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history99 ON LOG <https://example.org/sensors/99/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-FROM NAMED WINDOW ex:live100 ON STREAM <https://example.org/sensors/100/live> [RANGE 60 STEP 30]
-FROM NAMED WINDOW ex:history100 ON LOG <https://example.org/sensors/100/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
-
-DEFINE BASELINE ex:avg1 ON WINDOW ex:history1 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg2 ON WINDOW ex:history2 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg3 ON WINDOW ex:history3 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg4 ON WINDOW ex:history4 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg5 ON WINDOW ex:history5 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg6 ON WINDOW ex:history6 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg7 ON WINDOW ex:history7 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg8 ON WINDOW ex:history8 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg9 ON WINDOW ex:history9 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg10 ON WINDOW ex:history10 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg11 ON WINDOW ex:history11 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg12 ON WINDOW ex:history12 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg13 ON WINDOW ex:history13 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg14 ON WINDOW ex:history14 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg15 ON WINDOW ex:history15 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg16 ON WINDOW ex:history16 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg17 ON WINDOW ex:history17 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg18 ON WINDOW ex:history18 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg19 ON WINDOW ex:history19 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg20 ON WINDOW ex:history20 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg21 ON WINDOW ex:history21 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg22 ON WINDOW ex:history22 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg23 ON WINDOW ex:history23 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg24 ON WINDOW ex:history24 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg25 ON WINDOW ex:history25 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg26 ON WINDOW ex:history26 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg27 ON WINDOW ex:history27 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg28 ON WINDOW ex:history28 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg29 ON WINDOW ex:history29 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg30 ON WINDOW ex:history30 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg31 ON WINDOW ex:history31 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg32 ON WINDOW ex:history32 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg33 ON WINDOW ex:history33 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg34 ON WINDOW ex:history34 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg35 ON WINDOW ex:history35 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg36 ON WINDOW ex:history36 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg37 ON WINDOW ex:history37 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg38 ON WINDOW ex:history38 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg39 ON WINDOW ex:history39 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg40 ON WINDOW ex:history40 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg41 ON WINDOW ex:history41 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg42 ON WINDOW ex:history42 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg43 ON WINDOW ex:history43 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg44 ON WINDOW ex:history44 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg45 ON WINDOW ex:history45 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg46 ON WINDOW ex:history46 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg47 ON WINDOW ex:history47 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg48 ON WINDOW ex:history48 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg49 ON WINDOW ex:history49 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg50 ON WINDOW ex:history50 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg51 ON WINDOW ex:history51 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg52 ON WINDOW ex:history52 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg53 ON WINDOW ex:history53 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg54 ON WINDOW ex:history54 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg55 ON WINDOW ex:history55 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg56 ON WINDOW ex:history56 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg57 ON WINDOW ex:history57 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg58 ON WINDOW ex:history58 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg59 ON WINDOW ex:history59 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg60 ON WINDOW ex:history60 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg61 ON WINDOW ex:history61 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg62 ON WINDOW ex:history62 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg63 ON WINDOW ex:history63 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg64 ON WINDOW ex:history64 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg65 ON WINDOW ex:history65 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg66 ON WINDOW ex:history66 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg67 ON WINDOW ex:history67 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg68 ON WINDOW ex:history68 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg69 ON WINDOW ex:history69 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg70 ON WINDOW ex:history70 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg71 ON WINDOW ex:history71 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg72 ON WINDOW ex:history72 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg73 ON WINDOW ex:history73 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg74 ON WINDOW ex:history74 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg75 ON WINDOW ex:history75 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg76 ON WINDOW ex:history76 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg77 ON WINDOW ex:history77 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg78 ON WINDOW ex:history78 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg79 ON WINDOW ex:history79 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg80 ON WINDOW ex:history80 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg81 ON WINDOW ex:history81 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg82 ON WINDOW ex:history82 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg83 ON WINDOW ex:history83 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg84 ON WINDOW ex:history84 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg85 ON WINDOW ex:history85 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg86 ON WINDOW ex:history86 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg87 ON WINDOW ex:history87 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg88 ON WINDOW ex:history88 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg89 ON WINDOW ex:history89 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg90 ON WINDOW ex:history90 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg91 ON WINDOW ex:history91 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg92 ON WINDOW ex:history92 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg93 ON WINDOW ex:history93 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg94 ON WINDOW ex:history94 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg95 ON WINDOW ex:history95 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg96 ON WINDOW ex:history96 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg97 ON WINDOW ex:history97 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg98 ON WINDOW ex:history98 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg99 ON WINDOW ex:history99 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
-DEFINE BASELINE ex:avg100 ON WINDOW ex:history100 AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE { ?sensor ex:value ?historical . }
-GROUP BY ?sensor
-
 REGISTER RStream ex:anomalies AS
-USING BASELINE ex:avg1
-USING BASELINE ex:avg2
-USING BASELINE ex:avg3
-USING BASELINE ex:avg4
-USING BASELINE ex:avg5
-USING BASELINE ex:avg6
-USING BASELINE ex:avg7
-USING BASELINE ex:avg8
-USING BASELINE ex:avg9
-USING BASELINE ex:avg10
-USING BASELINE ex:avg11
-USING BASELINE ex:avg12
-USING BASELINE ex:avg13
-USING BASELINE ex:avg14
-USING BASELINE ex:avg15
-USING BASELINE ex:avg16
-USING BASELINE ex:avg17
-USING BASELINE ex:avg18
-USING BASELINE ex:avg19
-USING BASELINE ex:avg20
-USING BASELINE ex:avg21
-USING BASELINE ex:avg22
-USING BASELINE ex:avg23
-USING BASELINE ex:avg24
-USING BASELINE ex:avg25
-USING BASELINE ex:avg26
-USING BASELINE ex:avg27
-USING BASELINE ex:avg28
-USING BASELINE ex:avg29
-USING BASELINE ex:avg30
-USING BASELINE ex:avg31
-USING BASELINE ex:avg32
-USING BASELINE ex:avg33
-USING BASELINE ex:avg34
-USING BASELINE ex:avg35
-USING BASELINE ex:avg36
-USING BASELINE ex:avg37
-USING BASELINE ex:avg38
-USING BASELINE ex:avg39
-USING BASELINE ex:avg40
-USING BASELINE ex:avg41
-USING BASELINE ex:avg42
-USING BASELINE ex:avg43
-USING BASELINE ex:avg44
-USING BASELINE ex:avg45
-USING BASELINE ex:avg46
-USING BASELINE ex:avg47
-USING BASELINE ex:avg48
-USING BASELINE ex:avg49
-USING BASELINE ex:avg50
-USING BASELINE ex:avg51
-USING BASELINE ex:avg52
-USING BASELINE ex:avg53
-USING BASELINE ex:avg54
-USING BASELINE ex:avg55
-USING BASELINE ex:avg56
-USING BASELINE ex:avg57
-USING BASELINE ex:avg58
-USING BASELINE ex:avg59
-USING BASELINE ex:avg60
-USING BASELINE ex:avg61
-USING BASELINE ex:avg62
-USING BASELINE ex:avg63
-USING BASELINE ex:avg64
-USING BASELINE ex:avg65
-USING BASELINE ex:avg66
-USING BASELINE ex:avg67
-USING BASELINE ex:avg68
-USING BASELINE ex:avg69
-USING BASELINE ex:avg70
-USING BASELINE ex:avg71
-USING BASELINE ex:avg72
-USING BASELINE ex:avg73
-USING BASELINE ex:avg74
-USING BASELINE ex:avg75
-USING BASELINE ex:avg76
-USING BASELINE ex:avg77
-USING BASELINE ex:avg78
-USING BASELINE ex:avg79
-USING BASELINE ex:avg80
-USING BASELINE ex:avg81
-USING BASELINE ex:avg82
-USING BASELINE ex:avg83
-USING BASELINE ex:avg84
-USING BASELINE ex:avg85
-USING BASELINE ex:avg86
-USING BASELINE ex:avg87
-USING BASELINE ex:avg88
-USING BASELINE ex:avg89
-USING BASELINE ex:avg90
-USING BASELINE ex:avg91
-USING BASELINE ex:avg92
-USING BASELINE ex:avg93
-USING BASELINE ex:avg94
-USING BASELINE ex:avg95
-USING BASELINE ex:avg96
-USING BASELINE ex:avg97
-USING BASELINE ex:avg98
-USING BASELINE ex:avg99
-USING BASELINE ex:avg100
-SELECT ?sensor ?current ?historicalAverage
+SELECT ?sensor ?current (AVG(?historical) AS ?historicalAverage)
+FROM NAMED WINDOW ex:live1 ON STREAM <https://example.org/sensors/1/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history1 ON LOG <https://example.org/sensors/1/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live2 ON STREAM <https://example.org/sensors/2/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history2 ON LOG <https://example.org/sensors/2/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live3 ON STREAM <https://example.org/sensors/3/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history3 ON LOG <https://example.org/sensors/3/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live4 ON STREAM <https://example.org/sensors/4/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history4 ON LOG <https://example.org/sensors/4/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live5 ON STREAM <https://example.org/sensors/5/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history5 ON LOG <https://example.org/sensors/5/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live6 ON STREAM <https://example.org/sensors/6/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history6 ON LOG <https://example.org/sensors/6/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live7 ON STREAM <https://example.org/sensors/7/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history7 ON LOG <https://example.org/sensors/7/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live8 ON STREAM <https://example.org/sensors/8/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history8 ON LOG <https://example.org/sensors/8/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live9 ON STREAM <https://example.org/sensors/9/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history9 ON LOG <https://example.org/sensors/9/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live10 ON STREAM <https://example.org/sensors/10/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history10 ON LOG <https://example.org/sensors/10/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live11 ON STREAM <https://example.org/sensors/11/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history11 ON LOG <https://example.org/sensors/11/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live12 ON STREAM <https://example.org/sensors/12/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history12 ON LOG <https://example.org/sensors/12/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live13 ON STREAM <https://example.org/sensors/13/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history13 ON LOG <https://example.org/sensors/13/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live14 ON STREAM <https://example.org/sensors/14/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history14 ON LOG <https://example.org/sensors/14/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live15 ON STREAM <https://example.org/sensors/15/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history15 ON LOG <https://example.org/sensors/15/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live16 ON STREAM <https://example.org/sensors/16/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history16 ON LOG <https://example.org/sensors/16/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live17 ON STREAM <https://example.org/sensors/17/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history17 ON LOG <https://example.org/sensors/17/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live18 ON STREAM <https://example.org/sensors/18/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history18 ON LOG <https://example.org/sensors/18/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live19 ON STREAM <https://example.org/sensors/19/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history19 ON LOG <https://example.org/sensors/19/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live20 ON STREAM <https://example.org/sensors/20/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history20 ON LOG <https://example.org/sensors/20/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live21 ON STREAM <https://example.org/sensors/21/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history21 ON LOG <https://example.org/sensors/21/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live22 ON STREAM <https://example.org/sensors/22/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history22 ON LOG <https://example.org/sensors/22/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live23 ON STREAM <https://example.org/sensors/23/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history23 ON LOG <https://example.org/sensors/23/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live24 ON STREAM <https://example.org/sensors/24/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history24 ON LOG <https://example.org/sensors/24/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live25 ON STREAM <https://example.org/sensors/25/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history25 ON LOG <https://example.org/sensors/25/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live26 ON STREAM <https://example.org/sensors/26/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history26 ON LOG <https://example.org/sensors/26/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live27 ON STREAM <https://example.org/sensors/27/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history27 ON LOG <https://example.org/sensors/27/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live28 ON STREAM <https://example.org/sensors/28/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history28 ON LOG <https://example.org/sensors/28/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live29 ON STREAM <https://example.org/sensors/29/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history29 ON LOG <https://example.org/sensors/29/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live30 ON STREAM <https://example.org/sensors/30/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history30 ON LOG <https://example.org/sensors/30/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live31 ON STREAM <https://example.org/sensors/31/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history31 ON LOG <https://example.org/sensors/31/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live32 ON STREAM <https://example.org/sensors/32/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history32 ON LOG <https://example.org/sensors/32/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live33 ON STREAM <https://example.org/sensors/33/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history33 ON LOG <https://example.org/sensors/33/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live34 ON STREAM <https://example.org/sensors/34/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history34 ON LOG <https://example.org/sensors/34/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live35 ON STREAM <https://example.org/sensors/35/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history35 ON LOG <https://example.org/sensors/35/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live36 ON STREAM <https://example.org/sensors/36/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history36 ON LOG <https://example.org/sensors/36/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live37 ON STREAM <https://example.org/sensors/37/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history37 ON LOG <https://example.org/sensors/37/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live38 ON STREAM <https://example.org/sensors/38/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history38 ON LOG <https://example.org/sensors/38/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live39 ON STREAM <https://example.org/sensors/39/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history39 ON LOG <https://example.org/sensors/39/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live40 ON STREAM <https://example.org/sensors/40/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history40 ON LOG <https://example.org/sensors/40/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live41 ON STREAM <https://example.org/sensors/41/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history41 ON LOG <https://example.org/sensors/41/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live42 ON STREAM <https://example.org/sensors/42/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history42 ON LOG <https://example.org/sensors/42/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live43 ON STREAM <https://example.org/sensors/43/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history43 ON LOG <https://example.org/sensors/43/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live44 ON STREAM <https://example.org/sensors/44/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history44 ON LOG <https://example.org/sensors/44/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live45 ON STREAM <https://example.org/sensors/45/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history45 ON LOG <https://example.org/sensors/45/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live46 ON STREAM <https://example.org/sensors/46/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history46 ON LOG <https://example.org/sensors/46/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live47 ON STREAM <https://example.org/sensors/47/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history47 ON LOG <https://example.org/sensors/47/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live48 ON STREAM <https://example.org/sensors/48/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history48 ON LOG <https://example.org/sensors/48/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live49 ON STREAM <https://example.org/sensors/49/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history49 ON LOG <https://example.org/sensors/49/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live50 ON STREAM <https://example.org/sensors/50/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history50 ON LOG <https://example.org/sensors/50/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live51 ON STREAM <https://example.org/sensors/51/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history51 ON LOG <https://example.org/sensors/51/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live52 ON STREAM <https://example.org/sensors/52/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history52 ON LOG <https://example.org/sensors/52/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live53 ON STREAM <https://example.org/sensors/53/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history53 ON LOG <https://example.org/sensors/53/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live54 ON STREAM <https://example.org/sensors/54/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history54 ON LOG <https://example.org/sensors/54/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live55 ON STREAM <https://example.org/sensors/55/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history55 ON LOG <https://example.org/sensors/55/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live56 ON STREAM <https://example.org/sensors/56/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history56 ON LOG <https://example.org/sensors/56/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live57 ON STREAM <https://example.org/sensors/57/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history57 ON LOG <https://example.org/sensors/57/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live58 ON STREAM <https://example.org/sensors/58/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history58 ON LOG <https://example.org/sensors/58/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live59 ON STREAM <https://example.org/sensors/59/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history59 ON LOG <https://example.org/sensors/59/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live60 ON STREAM <https://example.org/sensors/60/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history60 ON LOG <https://example.org/sensors/60/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live61 ON STREAM <https://example.org/sensors/61/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history61 ON LOG <https://example.org/sensors/61/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live62 ON STREAM <https://example.org/sensors/62/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history62 ON LOG <https://example.org/sensors/62/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live63 ON STREAM <https://example.org/sensors/63/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history63 ON LOG <https://example.org/sensors/63/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live64 ON STREAM <https://example.org/sensors/64/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history64 ON LOG <https://example.org/sensors/64/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live65 ON STREAM <https://example.org/sensors/65/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history65 ON LOG <https://example.org/sensors/65/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live66 ON STREAM <https://example.org/sensors/66/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history66 ON LOG <https://example.org/sensors/66/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live67 ON STREAM <https://example.org/sensors/67/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history67 ON LOG <https://example.org/sensors/67/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live68 ON STREAM <https://example.org/sensors/68/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history68 ON LOG <https://example.org/sensors/68/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live69 ON STREAM <https://example.org/sensors/69/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history69 ON LOG <https://example.org/sensors/69/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live70 ON STREAM <https://example.org/sensors/70/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history70 ON LOG <https://example.org/sensors/70/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live71 ON STREAM <https://example.org/sensors/71/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history71 ON LOG <https://example.org/sensors/71/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live72 ON STREAM <https://example.org/sensors/72/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history72 ON LOG <https://example.org/sensors/72/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live73 ON STREAM <https://example.org/sensors/73/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history73 ON LOG <https://example.org/sensors/73/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live74 ON STREAM <https://example.org/sensors/74/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history74 ON LOG <https://example.org/sensors/74/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live75 ON STREAM <https://example.org/sensors/75/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history75 ON LOG <https://example.org/sensors/75/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live76 ON STREAM <https://example.org/sensors/76/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history76 ON LOG <https://example.org/sensors/76/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live77 ON STREAM <https://example.org/sensors/77/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history77 ON LOG <https://example.org/sensors/77/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live78 ON STREAM <https://example.org/sensors/78/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history78 ON LOG <https://example.org/sensors/78/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live79 ON STREAM <https://example.org/sensors/79/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history79 ON LOG <https://example.org/sensors/79/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live80 ON STREAM <https://example.org/sensors/80/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history80 ON LOG <https://example.org/sensors/80/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live81 ON STREAM <https://example.org/sensors/81/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history81 ON LOG <https://example.org/sensors/81/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live82 ON STREAM <https://example.org/sensors/82/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history82 ON LOG <https://example.org/sensors/82/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live83 ON STREAM <https://example.org/sensors/83/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history83 ON LOG <https://example.org/sensors/83/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live84 ON STREAM <https://example.org/sensors/84/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history84 ON LOG <https://example.org/sensors/84/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live85 ON STREAM <https://example.org/sensors/85/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history85 ON LOG <https://example.org/sensors/85/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live86 ON STREAM <https://example.org/sensors/86/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history86 ON LOG <https://example.org/sensors/86/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live87 ON STREAM <https://example.org/sensors/87/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history87 ON LOG <https://example.org/sensors/87/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live88 ON STREAM <https://example.org/sensors/88/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history88 ON LOG <https://example.org/sensors/88/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live89 ON STREAM <https://example.org/sensors/89/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history89 ON LOG <https://example.org/sensors/89/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live90 ON STREAM <https://example.org/sensors/90/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history90 ON LOG <https://example.org/sensors/90/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live91 ON STREAM <https://example.org/sensors/91/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history91 ON LOG <https://example.org/sensors/91/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live92 ON STREAM <https://example.org/sensors/92/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history92 ON LOG <https://example.org/sensors/92/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live93 ON STREAM <https://example.org/sensors/93/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history93 ON LOG <https://example.org/sensors/93/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live94 ON STREAM <https://example.org/sensors/94/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history94 ON LOG <https://example.org/sensors/94/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live95 ON STREAM <https://example.org/sensors/95/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history95 ON LOG <https://example.org/sensors/95/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live96 ON STREAM <https://example.org/sensors/96/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history96 ON LOG <https://example.org/sensors/96/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live97 ON STREAM <https://example.org/sensors/97/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history97 ON LOG <https://example.org/sensors/97/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live98 ON STREAM <https://example.org/sensors/98/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history98 ON LOG <https://example.org/sensors/98/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live99 ON STREAM <https://example.org/sensors/99/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history99 ON LOG <https://example.org/sensors/99/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live100 ON STREAM <https://example.org/sensors/100/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history100 ON LOG <https://example.org/sensors/100/history> [OFFSET 2592060 RANGE 2592000 STEP 30]
 WHERE {
- { WINDOW ex:live1 { ?sensor ex:value ?current . } GRAPH ex:avg1 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live2 { ?sensor ex:value ?current . } GRAPH ex:avg2 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live3 { ?sensor ex:value ?current . } GRAPH ex:avg3 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live4 { ?sensor ex:value ?current . } GRAPH ex:avg4 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live5 { ?sensor ex:value ?current . } GRAPH ex:avg5 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live6 { ?sensor ex:value ?current . } GRAPH ex:avg6 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live7 { ?sensor ex:value ?current . } GRAPH ex:avg7 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live8 { ?sensor ex:value ?current . } GRAPH ex:avg8 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live9 { ?sensor ex:value ?current . } GRAPH ex:avg9 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live10 { ?sensor ex:value ?current . } GRAPH ex:avg10 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live11 { ?sensor ex:value ?current . } GRAPH ex:avg11 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live12 { ?sensor ex:value ?current . } GRAPH ex:avg12 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live13 { ?sensor ex:value ?current . } GRAPH ex:avg13 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live14 { ?sensor ex:value ?current . } GRAPH ex:avg14 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live15 { ?sensor ex:value ?current . } GRAPH ex:avg15 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live16 { ?sensor ex:value ?current . } GRAPH ex:avg16 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live17 { ?sensor ex:value ?current . } GRAPH ex:avg17 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live18 { ?sensor ex:value ?current . } GRAPH ex:avg18 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live19 { ?sensor ex:value ?current . } GRAPH ex:avg19 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live20 { ?sensor ex:value ?current . } GRAPH ex:avg20 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live21 { ?sensor ex:value ?current . } GRAPH ex:avg21 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live22 { ?sensor ex:value ?current . } GRAPH ex:avg22 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live23 { ?sensor ex:value ?current . } GRAPH ex:avg23 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live24 { ?sensor ex:value ?current . } GRAPH ex:avg24 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live25 { ?sensor ex:value ?current . } GRAPH ex:avg25 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live26 { ?sensor ex:value ?current . } GRAPH ex:avg26 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live27 { ?sensor ex:value ?current . } GRAPH ex:avg27 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live28 { ?sensor ex:value ?current . } GRAPH ex:avg28 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live29 { ?sensor ex:value ?current . } GRAPH ex:avg29 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live30 { ?sensor ex:value ?current . } GRAPH ex:avg30 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live31 { ?sensor ex:value ?current . } GRAPH ex:avg31 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live32 { ?sensor ex:value ?current . } GRAPH ex:avg32 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live33 { ?sensor ex:value ?current . } GRAPH ex:avg33 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live34 { ?sensor ex:value ?current . } GRAPH ex:avg34 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live35 { ?sensor ex:value ?current . } GRAPH ex:avg35 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live36 { ?sensor ex:value ?current . } GRAPH ex:avg36 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live37 { ?sensor ex:value ?current . } GRAPH ex:avg37 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live38 { ?sensor ex:value ?current . } GRAPH ex:avg38 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live39 { ?sensor ex:value ?current . } GRAPH ex:avg39 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live40 { ?sensor ex:value ?current . } GRAPH ex:avg40 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live41 { ?sensor ex:value ?current . } GRAPH ex:avg41 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live42 { ?sensor ex:value ?current . } GRAPH ex:avg42 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live43 { ?sensor ex:value ?current . } GRAPH ex:avg43 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live44 { ?sensor ex:value ?current . } GRAPH ex:avg44 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live45 { ?sensor ex:value ?current . } GRAPH ex:avg45 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live46 { ?sensor ex:value ?current . } GRAPH ex:avg46 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live47 { ?sensor ex:value ?current . } GRAPH ex:avg47 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live48 { ?sensor ex:value ?current . } GRAPH ex:avg48 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live49 { ?sensor ex:value ?current . } GRAPH ex:avg49 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live50 { ?sensor ex:value ?current . } GRAPH ex:avg50 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live51 { ?sensor ex:value ?current . } GRAPH ex:avg51 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live52 { ?sensor ex:value ?current . } GRAPH ex:avg52 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live53 { ?sensor ex:value ?current . } GRAPH ex:avg53 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live54 { ?sensor ex:value ?current . } GRAPH ex:avg54 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live55 { ?sensor ex:value ?current . } GRAPH ex:avg55 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live56 { ?sensor ex:value ?current . } GRAPH ex:avg56 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live57 { ?sensor ex:value ?current . } GRAPH ex:avg57 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live58 { ?sensor ex:value ?current . } GRAPH ex:avg58 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live59 { ?sensor ex:value ?current . } GRAPH ex:avg59 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live60 { ?sensor ex:value ?current . } GRAPH ex:avg60 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live61 { ?sensor ex:value ?current . } GRAPH ex:avg61 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live62 { ?sensor ex:value ?current . } GRAPH ex:avg62 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live63 { ?sensor ex:value ?current . } GRAPH ex:avg63 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live64 { ?sensor ex:value ?current . } GRAPH ex:avg64 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live65 { ?sensor ex:value ?current . } GRAPH ex:avg65 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live66 { ?sensor ex:value ?current . } GRAPH ex:avg66 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live67 { ?sensor ex:value ?current . } GRAPH ex:avg67 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live68 { ?sensor ex:value ?current . } GRAPH ex:avg68 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live69 { ?sensor ex:value ?current . } GRAPH ex:avg69 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live70 { ?sensor ex:value ?current . } GRAPH ex:avg70 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live71 { ?sensor ex:value ?current . } GRAPH ex:avg71 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live72 { ?sensor ex:value ?current . } GRAPH ex:avg72 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live73 { ?sensor ex:value ?current . } GRAPH ex:avg73 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live74 { ?sensor ex:value ?current . } GRAPH ex:avg74 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live75 { ?sensor ex:value ?current . } GRAPH ex:avg75 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live76 { ?sensor ex:value ?current . } GRAPH ex:avg76 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live77 { ?sensor ex:value ?current . } GRAPH ex:avg77 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live78 { ?sensor ex:value ?current . } GRAPH ex:avg78 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live79 { ?sensor ex:value ?current . } GRAPH ex:avg79 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live80 { ?sensor ex:value ?current . } GRAPH ex:avg80 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live81 { ?sensor ex:value ?current . } GRAPH ex:avg81 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live82 { ?sensor ex:value ?current . } GRAPH ex:avg82 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live83 { ?sensor ex:value ?current . } GRAPH ex:avg83 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live84 { ?sensor ex:value ?current . } GRAPH ex:avg84 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live85 { ?sensor ex:value ?current . } GRAPH ex:avg85 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live86 { ?sensor ex:value ?current . } GRAPH ex:avg86 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live87 { ?sensor ex:value ?current . } GRAPH ex:avg87 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live88 { ?sensor ex:value ?current . } GRAPH ex:avg88 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live89 { ?sensor ex:value ?current . } GRAPH ex:avg89 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live90 { ?sensor ex:value ?current . } GRAPH ex:avg90 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live91 { ?sensor ex:value ?current . } GRAPH ex:avg91 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live92 { ?sensor ex:value ?current . } GRAPH ex:avg92 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live93 { ?sensor ex:value ?current . } GRAPH ex:avg93 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live94 { ?sensor ex:value ?current . } GRAPH ex:avg94 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live95 { ?sensor ex:value ?current . } GRAPH ex:avg95 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live96 { ?sensor ex:value ?current . } GRAPH ex:avg96 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live97 { ?sensor ex:value ?current . } GRAPH ex:avg97 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live98 { ?sensor ex:value ?current . } GRAPH ex:avg98 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live99 { ?sensor ex:value ?current . } GRAPH ex:avg99 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
- UNION
- { WINDOW ex:live100 { ?sensor ex:value ?current . } GRAPH ex:avg100 { ?sensor ex:historicalAverage ?historicalAverage . } GRAPH <https://example.org/metadata> { ?sensor ex:locatedIn ex:RoomA . } FILTER(?current > 1.3 * ?historicalAverage) }
+  {
+    WINDOW ex:live1 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history1 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live2 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history2 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live3 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history3 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live4 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history4 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live5 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history5 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live6 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history6 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live7 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history7 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live8 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history8 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live9 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history9 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live10 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history10 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live11 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history11 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live12 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history12 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live13 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history13 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live14 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history14 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live15 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history15 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live16 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history16 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live17 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history17 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live18 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history18 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live19 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history19 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live20 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history20 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live21 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history21 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live22 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history22 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live23 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history23 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live24 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history24 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live25 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history25 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live26 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history26 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live27 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history27 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live28 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history28 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live29 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history29 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live30 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history30 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live31 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history31 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live32 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history32 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live33 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history33 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live34 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history34 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live35 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history35 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live36 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history36 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live37 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history37 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live38 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history38 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live39 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history39 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live40 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history40 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live41 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history41 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live42 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history42 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live43 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history43 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live44 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history44 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live45 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history45 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live46 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history46 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live47 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history47 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live48 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history48 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live49 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history49 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live50 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history50 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live51 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history51 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live52 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history52 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live53 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history53 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live54 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history54 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live55 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history55 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live56 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history56 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live57 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history57 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live58 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history58 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live59 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history59 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live60 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history60 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live61 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history61 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live62 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history62 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live63 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history63 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live64 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history64 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live65 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history65 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live66 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history66 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live67 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history67 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live68 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history68 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live69 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history69 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live70 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history70 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live71 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history71 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live72 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history72 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live73 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history73 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live74 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history74 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live75 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history75 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live76 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history76 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live77 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history77 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live78 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history78 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live79 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history79 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live80 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history80 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live81 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history81 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live82 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history82 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live83 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history83 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live84 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history84 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live85 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history85 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live86 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history86 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live87 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history87 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live88 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history88 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live89 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history89 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live90 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history90 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live91 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history91 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live92 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history92 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live93 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history93 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live94 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history94 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live95 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history95 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live96 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history96 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live97 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history97 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live98 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history98 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live99 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history99 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
+  UNION
+  {
+    WINDOW ex:live100 {
+      ?sensor ex:value ?current .
+    }
+    WINDOW ex:history100 {
+      ?sensor ex:value ?historical .
+    }
+    GRAPH <https://example.org/metadata> {
+      ?sensor ex:locatedIn ex:RoomA .
+    }
+  }
 }
+GROUP BY ?sensor ?current
+HAVING (?current > 1.3 * AVG(?historical))

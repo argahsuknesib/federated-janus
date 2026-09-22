@@ -1,24 +1,16 @@
 PREFIX ex: <https://example.org/>
 
-FROM NAMED WINDOW ex:live ON STREAM ex:live-sensors [RANGE 60 STEP 5]
-FROM NAMED WINDOW ex:history ON LOG ex:historical-sensors [OFFSET 2592000 RANGE 2592000 STEP 5]
-
-DEFINE BASELINE ex:historicalAverage ON WINDOW ex:history AS
-SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
-WHERE {
-  ?sensor ex:value ?historical .
-}
-GROUP BY ?sensor
-
 REGISTER RStream ex:anomalies AS
-USING BASELINE ex:historicalAverage
-SELECT ?sensor ?current ?historicalAverage
+SELECT ?sensor ?current (AVG(?historical) AS ?historicalAverage)
+FROM NAMED WINDOW ex:live ON STREAM ex:live-sensors [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history ON LOG ex:historical-sensors [OFFSET 2592060 RANGE 2592000 STEP 30]
 WHERE {
   WINDOW ex:live {
     ?sensor ex:value ?current .
   }
-  GRAPH ex:historicalAverage {
-    ?sensor ex:historicalAverage ?historicalAverage .
+  WINDOW ex:history {
+    ?sensor ex:value ?historical .
   }
-  FILTER(?current > 1.3 * ?historicalAverage)
 }
+GROUP BY ?sensor ?current
+HAVING (?current > 1.3 * AVG(?historical))
