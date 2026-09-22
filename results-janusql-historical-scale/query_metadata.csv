@@ -1,0 +1,2 @@
+query,query_parse_ms,query_lowering_ms,evaluation_time,live_start,live_end,historical_start,historical_end,join_variable,aggregate,predicate,threshold
+queries/anomaly.janusql,0.204625,0.022625,3000000,2999940,3000000,408000,3000000,?sensor,AVG,https://example.org/value,1.3

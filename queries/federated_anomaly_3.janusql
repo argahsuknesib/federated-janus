@@ -1,0 +1,66 @@
+PREFIX ex: <https://example.org/>
+
+FROM NAMED WINDOW ex:live1 ON STREAM <https://example.org/sensors/1/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history1 ON LOG <https://example.org/sensors/1/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live2 ON STREAM <https://example.org/sensors/2/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history2 ON LOG <https://example.org/sensors/2/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
+FROM NAMED WINDOW ex:live3 ON STREAM <https://example.org/sensors/3/live> [RANGE 60 STEP 30]
+FROM NAMED WINDOW ex:history3 ON LOG <https://example.org/sensors/3/history> [OFFSET 2592000 RANGE 2592000 STEP 30]
+
+DEFINE BASELINE ex:historicalAverage1 ON WINDOW ex:history1 AS
+SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
+WHERE {
+  ?sensor ex:value ?historical .
+}
+GROUP BY ?sensor
+
+DEFINE BASELINE ex:historicalAverage2 ON WINDOW ex:history2 AS
+SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
+WHERE {
+  ?sensor ex:value ?historical .
+}
+GROUP BY ?sensor
+
+DEFINE BASELINE ex:historicalAverage3 ON WINDOW ex:history3 AS
+SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
+WHERE {
+  ?sensor ex:value ?historical .
+}
+GROUP BY ?sensor
+
+REGISTER RStream ex:anomalies AS
+USING BASELINE ex:historicalAverage1
+USING BASELINE ex:historicalAverage2
+USING BASELINE ex:historicalAverage3
+SELECT ?sensor ?current ?historicalAverage
+WHERE {
+  {
+    WINDOW ex:live1 {
+      ?sensor ex:value ?current .
+    }
+    GRAPH ex:historicalAverage1 {
+      ?sensor ex:historicalAverage ?historicalAverage .
+    }
+    FILTER(?current > 1.3 * ?historicalAverage)
+  }
+  UNION
+  {
+    WINDOW ex:live2 {
+      ?sensor ex:value ?current .
+    }
+    GRAPH ex:historicalAverage2 {
+      ?sensor ex:historicalAverage ?historicalAverage .
+    }
+    FILTER(?current > 1.3 * ?historicalAverage)
+  }
+  UNION
+  {
+    WINDOW ex:live3 {
+      ?sensor ex:value ?current .
+    }
+    GRAPH ex:historicalAverage3 {
+      ?sensor ex:historicalAverage ?historicalAverage .
+    }
+    FILTER(?current > 1.3 * ?historicalAverage)
+  }
+}

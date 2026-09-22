@@ -1,6 +1,8 @@
 pub mod compact;
+pub mod federated;
 mod historical;
 mod live;
+pub use federated::{SensorId, SensorSourcePair, SourceRegistry};
 pub use historical::{HistoricalSource, InMemoryHistoricalSource};
 use janus::core::RDFEvent;
 pub use live::{InMemoryLiveSource, LiveSource};

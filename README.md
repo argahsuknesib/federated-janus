@@ -1,6 +1,54 @@
 # Federated-Janus
 
+## Continuous real-time federation experiment
+
+Previous experiments are deterministic single evaluations over synthetic window
+state.  `continuous_realtime_benchmark` is separate: it publishes actual RDF
+observations into independently addressable in-process live sources at 4 Hz,
+maintains the parsed Janus-QL `RANGE 60 STEP 30` live windows, and evaluates one
+registered federated query repeatedly.  It is not remote or network execution.
+
+Run the five-pair wall-clock smoke experiment (about two minutes):
+
+```sh
+cargo run --release --bin continuous_realtime_benchmark
+```
+
+It writes `results-continuous-realtime/` without changing existing federation
+width/selectivity results.  `--source-pairs 10 --active-schedule 2,5,10`
+demonstrates dynamic source activity.  The schedule controls publishers only;
+`LiveFirstSourceSelection` discovers active branches from the live windows.
+
 Federated query planning, join optimization, and distributed execution for Janus-QL over historical RDF data and live RDF streams.
+
+## Query planning and data-transfer trade-offs
+
+Previous experiments establish aggregation pushdown, live-source pruning, and
+repeated continuous execution. The `query_planning_bytes_benchmark` adds one
+static RDF metadata input to the same logical Janus-QL query and studies
+operator ordering, join strategy, and placement by transferred bytes. Metadata
+uses the standards-compatible named graph
+`<https://example.org/metadata>` and the triple
+`?sensor ex:locatedIn ex:RoomA`; no Janus grammar extension is used.
+
+The benchmark has 100 independent live/history source pairs plus that metadata
+source. It uses deterministic logical replay at 4 Hz, `RANGE 60 STEP 30`, and
+the Janus half-open historical interval `[T - 30d, T)`. Live activity and
+metadata eligibility use independent deterministic assignments. The five
+equivalent, manually selected plans are `CentralFetchAll`, `AggregateAll`,
+`LiveFirst`, `MetadataFirst`, and `LiveMetadataSemiJoin`. They are experiment
+inputs, not an optimizer and are never automatically selected.
+
+```sh
+cargo run --release --bin query_planning_bytes_benchmark -- --depth-sensitivity
+```
+
+This writes `results-query-planning-bytes/measurements.csv`, operator-level
+measurements, a plan-dominance matrix, query metadata, and SVGs. Bytes are a
+consistent logical wire representation: live RDF row 80 B, metadata RDF triple
+72 B, aggregate tuple 48 B, sensor-key binding 40 B, and raw historical RDF
+row 80 B. Local source processing is excluded. The dominance map is evidence
+for a possible future cost model; it does not implement one.
 
 Janus provides unified continuous querying over historical RDF data and live RDF streams. Federated-Janus is a narrow experimental framework for measuring how equivalent hybrid queries behave under different physical plans when their logical sources are distinct. The present goal is not automatic optimization: plans are explicit and manually selected.
 
@@ -71,7 +119,13 @@ The execution pipeline is `anomaly.janusql → JanusQLParser → Janus AST →
 Federated-Janus lowering → logical hybrid query → FetchAll /
 AggregatePushdown / BindJoin`.
 
-### FetchAll
+### Preserved entity-selectivity plans
+
+The following original plans operate on one live source and one historical
+source. Their many sensors are **live/historical entities inside those shared
+sources**, not independently addressable sources.
+
+#### FetchAll
 
 ```text
 Live source ---------> coordinator
@@ -80,7 +134,7 @@ Historical source ---> coordinator -> aggregate + join + filter
 
 The coordinator receives the complete relevant historical window and aggregates it.
 
-### AggregatePushdown
+#### AggregatePushdown
 
 ```text
 Historical source: full scan -> AVG per sensor --\
@@ -90,7 +144,7 @@ Live source -----------------------------------/
 
 The historical source aggregates all sensors and transfers only baselines.
 
-### BindJoin
+#### BindJoin
 
 ```text
 Live source -> distinct sensor IDs -> historical source index
@@ -102,18 +156,139 @@ Live source -> distinct sensor IDs -> historical source index
 
 The historical source accesses only sensor partitions referenced by the live window.
 
-## Preliminary Janus-QL-driven results
+## Source-oriented experiments
+
+`source_oriented_benchmark` introduces a separate `SourceRegistry`: each
+`https://example.org/sensors/{id}/live` and
+`https://example.org/sensors/{id}/history` IRI resolves to a distinct source
+instance. A historical instance holds observations for only its own sensor;
+this is not a shared `HashMap` of entities presented as sources.
+
+Experiment 1, `historical-depth`, uses exactly Sensor 1's live/history pair
+and varies historical observations per source from 1k through 10M. It compares
+`FetchAllSources` with `AggregateAllSources`; BindJoin is intentionally absent
+because `?sensor = sensor1` cannot reduce a single-sensor historical source.
+Synthetic timestamps are deterministically distributed across Janus's 30-day
+`[T - OFFSET, T - OFFSET + RANGE)` interval.
+
+Experiment 1, `source_oriented_benchmark`, varies 1, 5, 10, 25, 50, or 100
+**source pairs** at 10,000 historical observations per source. A source pair
+is one independently addressable live source plus one independently addressable
+historical source, not an RDF entity. It generates one Janus-QL query with all
+anomaly branches connected by `UNION`, parses it once, lowers/decomposes it
+once, and reuses that plan for one warmup and five measured repetitions per
+manual strategy. `LiveFirstSourceSelection` discovers nonempty live branches at
+execution time before deciding which historical sources to contact.
+
+The deterministic active set is the source-ID prefix of size
+`max(1, ceil(source_pairs / 10))`: therefore 1/5/10 source pairs have one
+active live source, 25 has three, 50 has five, and 100 has ten. The benchmark
+writes raw rows, summaries, query metadata, and plots to
+`results-single-query-federation-width/`; parser/lowering/decomposition timing
+is recorded in metadata and excluded from repeated execution latency.
+
+```sh
+cargo run --release --bin source_oriented_benchmark
+```
+
+## Source-oriented experiment 2: Active-source selectivity
+
+Experiment 2 holds federation size fixed while varying runtime source
+relevance. It uses one 100-branch Janus-QL `UNION` query over 100 source pairs,
+with 10,000 historical observations in every historical source. For each active
+count, the query is parsed, lowered, and decomposed once, then its 100 branch
+fragments and the same historical source instances are reused for one warmup
+and five measured repetitions per explicit strategy. Query setup is recorded
+separately and excluded from latency.
+
+```text
+Fixed:   100 source pairs; 10,000 historical observations/source
+Varied:  1, 5, 10, 25, 50, 75, 100 active live branches
+```
+
+The benchmark controls only which deterministic live sources contain an event.
+`LiveFirstSourceSelection` still obtains that fact by materializing every live
+window; it is not passed active source IDs. All strategies had equal result
+counts and the same stable result hash at every active count.
+
+| Active branches | Fetch / Aggregate / LiveFirst historical contacts | LiveFirst scans | Fetch / Aggregate / LiveFirst median ms |
+|---:|---:|---:|---:|
+| 1 (1%) | 100 / 100 / 1 | 10k | 139.872 / 29.431 / 0.303 |
+| 5 (5%) | 100 / 100 / 5 | 50k | 134.519 / 28.639 / 1.501 |
+| 10 (10%) | 100 / 100 / 10 | 100k | 134.597 / 28.788 / 2.829 |
+| 25 (25%) | 100 / 100 / 25 | 250k | 134.181 / 28.924 / 7.244 |
+| 50 (50%) | 100 / 100 / 50 | 500k | 131.312 / 29.972 / 14.506 |
+| 75 (75%) | 100 / 100 / 75 | 750k | 135.274 / 29.672 / 21.371 |
+| 100 (100%) | 100 / 100 / 100 | 1M | 131.635 / 29.466 / 28.491 |
+
+The observed benefit of source selection diminishes continuously as active
+branches approach all 100 sources. At 100% activity it has no pruning work and
+is close to `AggregateAllSources` in this synthetic run (28.491 versus 29.466
+ms median). This does not establish a general crossover or automatic plan
+choice. `FetchAllSources` remains the raw-transfer correctness baseline.
+
+![Historical sources contacted by active live sources](docs/figures/active_selectivity_sources_contacted.png)
+
+![Median latency by active live sources](docs/figures/active_selectivity_latency.png)
+
+![Historical observations scanned by active live sources](docs/figures/active_selectivity_records_scanned.png)
+
+![Transferred data by active live sources](docs/figures/active_selectivity_bytes.png)
+
+Artifacts are in `results-single-query-active-selectivity/`. This is distinct
+from Experiment 1: Experiment 1 varied the number of source pairs near 10%
+activity, whereas Experiment 2 fixes 100 source pairs and varies live-branch
+activity.
+
+```sh
+cargo run --release --bin active_selectivity_benchmark
+```
+
+## Preserved entity-selectivity experiment 1: historical entity population
+
+What happens when the live query remains fixed but the historical archive grows? This is the first demonstration of why restricting historical work can matter.
+
+```text
+Fixed:   live entities = 100; historical observations per entity = 100
+Varied:  historical entities = 1,000 → 100,000
+Archive: 100,000 → 10,000,000 historical observations
+```
+
+The query was parsed and lowered once (0.205 ms and 0.023 ms, excluded from plan timings). Each archive used one shared deterministic dataset, one warmup, and five measured repetitions per strategy. All strategies produced the same stable result hash at every scale.
+
+| Historical observations | FetchAll median ms | AggregatePushdown median ms | BindJoin median ms |
+|---:|---:|---:|---:|
+| 100k | 0.177 | 0.149 | 0.031 |
+| 500k | 0.611 | 0.550 | 0.023 |
+| 1M | 0.943 | 0.846 | 0.018 |
+| 2.5M | 1.898 | 1.742 | 0.013 |
+| 5M | 3.569 | 3.397 | 0.011 |
+| 10M | 6.658 | 6.713 | 0.012 |
+
+FetchAll and AggregatePushdown each scanned the entire shared historical source: 100k through 10M records. BindJoin scanned approximately 10,000 records at every scale (100 fixed live entity bindings × 100 observations), returned 100 aggregate rows, and transferred about 2.8 KB. FetchAll transfer grew from 2.4 MB to 240 MB; AggregatePushdown grew from 13.2 KB to 1.2 MB because its aggregate output grows with historical entities.
+
+![Historical-scale median latency](docs/figures/historical_scale_latency.png)
+
+![Historical-scale historical work](docs/figures/historical_scale_work.png)
+
+![Historical-scale transferred data](docs/figures/historical_scale_bytes.png)
+
+The differences are already clear at 500k observations and become pronounced by 1M. This is a compact indexed benchmark, so the absolute timings are not end-to-end Janus deployment timings; the result demonstrates the controlled scaling relationship, not universal superiority.
+
+## Preserved entity-selectivity experiment 2: live-side selectivity
 
 These are **preliminary**, not publication-final results. The 10M-row campaign used the actual parsed [anomaly.janusql](queries/anomaly.janusql) path, one shared deterministic historical dataset, one warmup, and three measured repetitions per strategy/cardinality. Parser and lowering work were performed once per invocation (0.199 ms and 0.004 ms in this run) and excluded from execution latency.
 
+This answers a different question: when does BindJoin stop being advantageous as the live side covers more of a fixed 100,000-sensor, 10M-observation archive?
+
 ```text
-Historical sensors:       100,000
-Observations per sensor:  100
+Historical entities:      100,000
+Observations per entity:  100
 Historical observations: 10,000,000
 Live cardinalities:       10 to 100,000 (including 30,000 and 35,000)
 ```
 
-| Live sensors | Live fraction | FetchAll median ms | AggregatePushdown median ms | BindJoin median ms |
+| Live entities | Live fraction | FetchAll median ms | AggregatePushdown median ms | BindJoin median ms |
 |---:|---:|---:|---:|---:|
 | 10 | 0.01% | 7.935 | 7.359 | 0.001 |
 | 100 | 0.1% | 7.409 | 6.801 | 0.011 |
@@ -131,17 +306,17 @@ All three strategies had equal result count and stable result hash at every card
 
 The median crossover is between 25% and 30% coverage: BindJoin is lower at 25%, while AggregatePushdown is lower at 30% and 35%. This is an observed workload-specific region rather than a universal threshold. It moved below the earlier prototype's reported 30–35% interval. Peak RSS was not recorded.
 
-## Diagnostic figures
+### Figures
 
-![Median execution latency by live-side coverage](docs/figures/latency.svg)
+![Median execution latency by live-side coverage](docs/figures/latency.png)
 
-![Mean transferred data by live-side coverage](docs/figures/bytes.svg)
+![Mean transferred data by live-side coverage](docs/figures/bytes.png)
 
-![Historical observations scanned by live-side coverage](docs/figures/historical_work.svg)
+![Historical observations scanned by live-side coverage](docs/figures/historical_work.png)
 
-README-facing copies live under `docs/figures/`; the query-driven raw artifacts are in `results-janusql-full/`. Earlier `results*` directories remain preserved prototype results from the fixed Rust logical-query stage and are not the headline measurements.
+README-facing copies live under `docs/figures/`; raw query-driven artifacts are in `results-janusql-historical-scale/` and `results-janusql-full/`. Earlier `results*` directories remain preserved prototype results from the fixed Rust logical-query stage and are not the headline measurements.
 
-## Preliminary observations
+### Interpretation
 
 The following observations are limited to the measured two-source workload:
 
@@ -151,7 +326,7 @@ The following observations are limited to the measured two-source workload:
 - BindJoin cost increases with the number of live bindings.
 - Different physical plans become preferable under different workload characteristics.
 
-These findings reproduce the prototype's qualitative behavior: FetchAll transfers far more data, BindJoin is strongest for selective live inputs and grows with bound historical work, and AggregatePushdown scans the full historical population. They do not establish a general threshold or claim an automatic optimizer; automatic planning is optional future work.
+These findings reproduce the prototype's qualitative behavior: FetchAll transfers far more data, BindJoin is strongest for selective live inputs and grows with bound historical work, and AggregatePushdown scans the full historical population. They concern entity selectivity within shared sources, not source selection; they do not establish a general threshold or claim an automatic optimizer.
 
 ## Next use case: three-source anomaly detection
 
@@ -191,7 +366,7 @@ The next experiment should ask whether metadata selectivity changes plan prefere
 
 ## Future physical-plan families
 
-The following are research candidates, not implemented strategies: FilterPushdown, ProjectionPushdown, SemiJoin, Multi-stage BindJoin, Metadata-first restriction, Live-first restriction, Historical-first execution, remote join execution, partial aggregation, hierarchical aggregation, cached historical aggregates, and reuse of historical intermediate results across continuous evaluations. FetchAll, AggregatePushdown, and BindJoin are the only currently implemented plans.
+The following are research candidates, not implemented strategies: FilterPushdown, ProjectionPushdown, SemiJoin, Multi-stage BindJoin, Metadata-first restriction, Historical-first execution, remote join execution, partial aggregation, hierarchical aggregation, cached historical aggregates, and reuse of historical intermediate results across continuous evaluations. The implemented manual plans are the entity-selectivity `FetchAll`, `AggregatePushdown`, `BindJoin`, and the source-oriented `FetchAllSources`, `AggregateAllSources`, `LiveFirstSourceSelection`.
 
 ## Multi-source direction
 
@@ -208,7 +383,9 @@ Phase 1 — Two-source physical plans
 ✓ FetchAll
 ✓ AggregatePushdown
 ✓ BindJoin
-✓ preliminary scale experiment
+✓ entity-selectivity population and live-side experiments
+✓ source-oriented historical-depth benchmark
+✓ source-oriented federation-width benchmark
 
 Phase 2 — Three-source joins
 ○ metadata source
@@ -217,9 +394,9 @@ Phase 2 — Three-source joins
 ○ multi-stage bind joins
 
 Phase 3 — Larger federation
-○ multiple historical sources
-○ multiple live streams
-○ operator placement
+✓ independently addressable live/history sensor pairs
+✓ manual live-first source selection
+○ additional source topologies
 
 Phase 4 — Governance
 ○ ODRL

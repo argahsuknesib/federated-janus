@@ -1,0 +1,2 @@
+query_parse_lower_decompose_once,setup_ms,lowering_ms,decomposition_ms,range_s,step_s,branch_count
+true,0.429375,0.000208,0.039500,60,30,5

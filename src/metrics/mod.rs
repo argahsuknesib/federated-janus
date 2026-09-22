@@ -4,6 +4,9 @@ use std::time::Duration;
 pub struct ExecutionMetrics {
     pub strategy: ExecutionStrategy,
     pub end_to_end: Duration,
+    /// Time used to materialize all live windows. Kept separate from the
+    /// historical phase so source-selection work is observable.
+    pub live_phase: Duration,
     pub historical_source: Duration,
     pub coordinator: Duration,
     pub live_records: u64,
@@ -15,6 +18,16 @@ pub struct ExecutionMetrics {
     pub bytes_received_from_historical_source: u64,
     pub bytes_transferred: u64,
     pub source_requests: u64,
+    /// Source-oriented experiment fields. They remain zero for the preserved
+    /// entity-selectivity experiment.
+    pub total_sources_declared: u64,
+    pub live_sources_declared: u64,
+    pub historical_sources_declared: u64,
+    pub live_sources_with_window: u64,
+    pub historical_sources_contacted: u64,
+    pub historical_sources_skipped: u64,
+    pub raw_records_transferred: u64,
+    pub aggregate_rows_transferred: u64,
     pub result_cardinality: u64,
 }
 impl ExecutionMetrics {

@@ -4,6 +4,9 @@ pub enum ExecutionStrategy {
     FetchAll,
     AggregatePushdown,
     BindJoin,
+    FetchAllSources,
+    AggregateAllSources,
+    LiveFirstSourceSelection,
 }
 impl ExecutionStrategy {
     pub fn as_str(self) -> &'static str {
@@ -11,6 +14,9 @@ impl ExecutionStrategy {
             Self::FetchAll => "fetch-all",
             Self::AggregatePushdown => "aggregate-pushdown",
             Self::BindJoin => "bind-join",
+            Self::FetchAllSources => "fetch-all-sources",
+            Self::AggregateAllSources => "aggregate-all-sources",
+            Self::LiveFirstSourceSelection => "live-first-source-selection",
         }
     }
 }
