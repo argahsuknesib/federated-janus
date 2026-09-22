@@ -131,12 +131,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if args.historical_quads.is_empty()
         || args.historical_quads.contains(&0)
         || args.historical_sensors == 0
+        || args.historical_quads.iter().any(|&n| n < args.historical_sensors)
         || args.live_sensors == 0
         || args.live_sensors > args.historical_sensors
         || args.segment_quads == 0
+        || args.repetitions == 0
     {
         return Err(
-            "historical quads/sensors, live sensors and segment size must be positive; live_sensors must not exceed historical_sensors"
+            "historical quads/sensors, live sensors, repetitions and segment size must be positive; every archive must represent all historical sensors, and live_sensors must not exceed historical_sensors"
                 .into(),
         );
     }

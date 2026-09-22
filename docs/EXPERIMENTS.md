@@ -32,7 +32,7 @@ The following stay constant:
 - storage configuration
 - physical source topology
 
-There is no live-sensor percentage or active-source-selectivity sweep.
+The live workload is fixed for every run.
 
 ## Storage construction
 

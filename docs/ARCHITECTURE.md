@@ -111,4 +111,4 @@ This means a BindJoin result with fewer transferred bytes must not be described 
 
 The historical-scale benchmark intentionally keeps the live side fixed. The default contains 10 live sensor bindings inside the parsed 60-second live window.
 
-No live-cardinality percentage sweep is part of the benchmark.
+The live workload is fixed for every historical archive size.
