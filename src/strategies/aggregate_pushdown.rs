@@ -1,13 +1,24 @@
-use crate::sources::{HistoricalSource, LiveSource, Observation};
-use std::collections::HashMap;
+use super::StrategyOutput;
+use crate::sources::{HistoricalSource, LiveSource};
+
 pub fn run(
     live: &dyn LiveSource,
     history: &dyn HistoricalSource,
     live_bounds: (u64, u64),
     historical_bounds: (u64, u64),
-) -> (Vec<Observation>, HashMap<String, f64>) {
-    (
-        live.materialize_live_window(live_bounds.0, live_bounds.1),
-        history.averages(None, historical_bounds.0, historical_bounds.1),
-    )
+) -> StrategyOutput {
+    let live_rows = live.materialize_live_window(live_bounds.0, live_bounds.1);
+    let averages = history.averages(None, historical_bounds.0, historical_bounds.1);
+    let historical_bytes_received = averages
+        .keys()
+        .map(|sensor| (sensor.len() + std::mem::size_of::<f64>()) as u64)
+        .sum();
+
+    StrategyOutput {
+        historical_rows_returned: averages.len() as u64,
+        live_rows,
+        averages,
+        historical_bytes_received,
+        binding_bytes_sent: 0,
+    }
 }

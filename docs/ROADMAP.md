@@ -1,113 +1,50 @@
 # Research roadmap
 
-Federated-Janus is intentionally being developed in stages so that each optimization mechanism can be evaluated before automatic plan selection is introduced.
+## Current milestone
 
-## Completed
+The current controlled experiment varies historical RDF size from 100 to 1,000,000 quads while keeping the live workload fixed.
 
-### Hybrid-query execution
+It compares:
 
-- Janus-QL parsing and lowering
-- historical + live anomaly workload
-- explicit equivalent physical plans
-- shared-source aggregation pushdown and bind-style access
+- FetchAll
+- AggregatePushdown
+- BindJoin
 
-### Source-oriented federation
+over the same Janus `StreamingSegmentedStorage` backend.
 
-- independently addressable live/history sensor pairs
-- one Janus-QL query spanning many source pairs
-- structural `UNION` decomposition
-- manual live-first source selection
-- federation-width and active-source-selectivity studies
+## Immediate analysis
 
-### Continuous execution
+After running the benchmark, inspect:
 
-- real-time 4 Hz publishers
-- 60-second live windows
-- 30-second evaluation step
-- registered-once query plan
-- changing active source sets across evaluations
+1. how latency scales with historical quads;
+2. how many historical rows each strategy returns;
+3. how transfer volume scales;
+4. whether aggregation pushdown saves transfer as expected;
+5. whether BindJoin saves additional transfer for the fixed live bindings;
+6. whether all strategies scan the same number of historical records.
 
-### Multi-input query planning
+The sixth point is particularly important because the current segmented store is timestamp-indexed rather than subject-indexed.
 
-- static RDF metadata source
-- metadata filtering
-- live-first and metadata-first ordering
-- central hash/bind/semijoin-style comparisons
-- operator-level transfer accounting
-- empirical byte-optimal plan regions
+## Possible next storage experiment
 
-## Next
-
-### Validate planning regions under execution
-
-The controlled selectivity study provides a plan-dominance hypothesis. The next goal is to compare those predictions with representative continuous executions and determine whether byte-optimal and latency-optimal plans coincide.
-
-### Simple analytical cost model
-
-Only after the manual plan regions are validated should Federated-Janus estimate plan cost automatically.
-
-A first model can remain small:
+If BindJoin is limited by full historical scans, a later experiment can add a subject-aware index to Janus itself and compare:
 
 ```text
-estimated_bytes(plan)
-    =
-live transfer
-+ metadata transfer
-+ join-key transfer
-+ historical transfer
+timestamp-only segmented storage
+vs
+timestamp + subject-aware historical access
 ```
 
-Inputs can include:
+That should be treated as a separate storage contribution rather than hidden inside the Federated-Janus benchmark.
 
-- number of sources
-- observed/estimated live activity
-- metadata selectivity
-- expected live/metadata intersection
-- historical rows per source
-- tuple/key sizes
+## Later directions
 
-The first optimizer should enumerate the known plan set and choose the minimum estimated transfer cost. There is no need for a learned optimizer at this stage.
+Once the basic historical-scaling behavior is understood:
 
-## Later research directions
+- multiple independently addressable historical sources
+- actual remote/network source execution
+- operator placement across edge nodes
+- simple cost estimation
+- policy-constrained plans with ODRL/UMA
 
-### Networked edge deployment
-
-Replace in-process source abstractions with actual remote endpoints while preserving the logical/physical plan model. This would allow measurement of serialization, network latency, concurrency, and failure behavior.
-
-### Policy-constrained planning
-
-Introduce ODRL/UMA-style source constraints such as:
-
-- raw observations may not leave the source
-- only aggregates may be returned
-- intermediate bindings may or may not be transferred
-- results may or may not be cached
-- requester-specific source access
-
-Planning then becomes optimization over only the physically and policy-valid plans.
-
-### Additional source topologies
-
-Possible future workloads include:
-
-- one live + multiple historical sources
-- multiple live + one historical source
-- multiple live + multiple historical sources
-- multiple metadata sources
-- reusable/cached historical intermediate results
-
-### Adaptive planning
-
-Runtime replanning is intentionally later. It becomes meaningful only after a static cost model can explain the measured plan regions.
-
-## Explicit non-goals for the current prototype
-
-The current milestone does not attempt:
-
-- arbitrary SPARQL federation
-- automatic source discovery
-- general-purpose distributed joins
-- production network deployment
-- learned query optimization
-- adaptive replanning
-- policy enforcement
+Automatic plan selection should come only after the measured costs of the explicit plans are understood.

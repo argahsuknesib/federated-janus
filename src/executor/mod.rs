@@ -1,4 +1,3 @@
-use crate::sources::compact::CompactHistoricalSource;
 use crate::sources::SourceRegistry;
 use crate::{
     metrics::ExecutionMetrics,
@@ -6,11 +5,7 @@ use crate::{
     sources::{HistoricalSource, LiveSource, Observation},
     strategies,
 };
-use std::collections::HashSet;
-use std::{
-    collections::HashMap,
-    time::{Duration, Instant},
-};
+use std::time::{Duration, Instant};
 #[derive(Debug, Clone, PartialEq)]
 pub struct Anomaly {
     pub sensor: String,
@@ -56,95 +51,6 @@ impl std::fmt::Display for ExecutionError {
     }
 }
 impl std::error::Error for ExecutionError {}
-/// Executes the fixed benchmark query over compact numeric sensor IDs. This is
-/// intentionally benchmark-only; it avoids treating RDF string allocation as a plan cost.
-pub fn execute_compact(
-    strategy: ExecutionStrategy,
-    plan: &LogicalPlan,
-    live_events: &[(u32, u64, f64)],
-    history: &CompactHistoricalSource,
-    evaluation_time: u64,
-) -> ExecutionOutcome {
-    let (historical_start, historical_end) = plan
-        .historical_bounds(evaluation_time)
-        .expect("validated Janus historical window");
-    let (live_start, live_end) = plan
-        .live_bounds(evaluation_time)
-        .expect("validated Janus live window");
-    let live: Vec<(u32, f64)> = live_events
-        .iter()
-        .filter(|(_, timestamp, _)| *timestamp >= live_start && *timestamp < live_end)
-        .map(|(sensor, _, value)| (*sensor, *value))
-        .collect();
-    let total = Instant::now();
-    let source = Instant::now();
-    let (averages, stats) = match strategy {
-        ExecutionStrategy::BindJoin => {
-            let bound: HashSet<u32> = live.iter().map(|(s, _)| *s).collect();
-            history.aggregate_bound(&bound, historical_start, historical_end)
-        }
-        _ => history.aggregate_all(historical_start, historical_end),
-    };
-    let historical_source = source.elapsed();
-    let coordinator = Instant::now();
-    let mut results: Vec<_> = live
-        .iter()
-        .filter_map(|(sensor, current)| {
-            averages
-                .get(sensor)
-                .filter(|avg| *current > plan.condition.multiplier * *avg)
-                .map(|avg| Anomaly {
-                    sensor: format!("https://example.org/sensor{sensor}"),
-                    current_value: *current,
-                    historical_average: *avg,
-                })
-        })
-        .collect();
-    results.sort_by(|a, b| a.sensor.cmp(&b.sensor));
-    let result_cardinality = results.len() as u64;
-    let returned = match strategy {
-        ExecutionStrategy::FetchAll => stats.records_matched,
-        _ => stats.records_returned,
-    };
-    let received = match strategy {
-        ExecutionStrategy::FetchAll => stats.records_matched * 24,
-        _ => stats.records_returned * 12,
-    };
-    let sent = if strategy == ExecutionStrategy::BindJoin {
-        live.iter().map(|_| 4u64).sum()
-    } else {
-        0
-    };
-    ExecutionOutcome {
-        metrics: ExecutionMetrics {
-            strategy,
-            end_to_end: total.elapsed(),
-            live_phase: Duration::ZERO,
-            historical_source,
-            coordinator: coordinator.elapsed(),
-            live_records: live.len() as u64,
-            historical_records: returned,
-            historical_records_scanned: stats.records_scanned,
-            historical_entities_looked_up: stats.entities_looked_up,
-            historical_records_matched: stats.records_matched,
-            bytes_sent_to_historical_source: sent,
-            bytes_received_from_historical_source: received,
-            bytes_transferred: sent + received + live.len() as u64 * 12,
-            source_requests: 2,
-            total_sources_declared: 0,
-            live_sources_declared: 0,
-            historical_sources_declared: 0,
-            live_sources_with_window: 0,
-            historical_sources_contacted: 0,
-            historical_sources_skipped: 0,
-            raw_records_transferred: 0,
-            aggregate_rows_transferred: 0,
-            result_cardinality,
-        },
-        results,
-    }
-}
-
 /// Execute manually selected source-oriented plans.  Every source is resolved
 /// through `SourceRegistry`; no shared multi-sensor historical source exists.
 /// `plans` contains one Janus-QL-lowered query for each declared source pair.
@@ -348,13 +254,21 @@ pub fn execute(
             "source-oriented strategy requires execute_source_oriented".into(),
         ));
     }
+
     let live_bounds = plan.live_bounds(evaluation_time).map_err(ExecutionError)?;
     let historical_bounds = plan
         .historical_bounds(evaluation_time)
         .map_err(ExecutionError)?;
+
     let total = Instant::now();
     let source_start = Instant::now();
-    let (live_rows, averages): (Vec<Observation>, HashMap<String, f64>) = match strategy {
+    let strategies::StrategyOutput {
+        live_rows,
+        averages,
+        historical_rows_returned,
+        historical_bytes_received,
+        binding_bytes_sent,
+    } = match strategy {
         ExecutionStrategy::FetchAll => {
             strategies::fetch_all::run(live, history, live_bounds, historical_bounds)
         }
@@ -368,62 +282,54 @@ pub fn execute(
         | ExecutionStrategy::AggregateAllSources
         | ExecutionStrategy::LiveFirstSourceSelection => unreachable!("checked above"),
     };
-    let source_time = source_start.elapsed();
-    let coord = Instant::now();
+    let historical_source = source_start.elapsed();
+
+    let coordinator_start = Instant::now();
     let mut results: Vec<_> = live_rows
         .iter()
-        .filter_map(|o| {
+        .filter_map(|row| {
             averages
-                .get(&o.sensor)
-                .filter(|avg| o.value > plan.condition.multiplier * *avg)
+                .get(&row.sensor)
+                .filter(|avg| row.value > plan.condition.multiplier * *avg)
                 .map(|avg| Anomaly {
-                    sensor: o.sensor.clone(),
-                    current_value: o.value,
+                    sensor: row.sensor.clone(),
+                    current_value: row.value,
                     historical_average: *avg,
                 })
         })
         .collect();
-    results.sort_by(|a, b| {
-        a.sensor
-            .cmp(&b.sensor)
-            .then(a.current_value.total_cmp(&b.current_value))
+    results.sort_by(|left, right| {
+        left.sensor
+            .cmp(&right.sensor)
+            .then(left.current_value.total_cmp(&right.current_value))
     });
-    let historical_records = match strategy {
-        ExecutionStrategy::FetchAll => history
-            .materialize_historical_window(historical_bounds.0, historical_bounds.1)
-            .len() as u64,
-        _ => averages.len() as u64,
-    };
+    let coordinator = coordinator_start.elapsed();
+
+    // The current Janus segmented store is indexed by timestamp, not by
+    // subject/predicate. The historical-scale benchmark places the full archive
+    // inside the selected historical interval, so each strategy scans the full
+    // historical quad count. BindJoin still reduces bindings/results transferred,
+    // but it does not claim subject-index I/O pruning.
     let historical_records_scanned = history.record_count() as u64;
-    let historical_bytes: u64 = match strategy {
-        ExecutionStrategy::FetchAll => history
-            .materialize_historical_window(historical_bounds.0, historical_bounds.1)
-            .iter()
-            .map(Observation::serialized_bytes)
-            .sum(),
-        _ => averages.keys().map(|s| (s.len() + 8) as u64).sum(),
-    };
     let live_bytes: u64 = live_rows.iter().map(Observation::serialized_bytes).sum();
-    let coordinator = coord.elapsed();
+
     Ok(ExecutionOutcome {
         metrics: ExecutionMetrics {
             strategy,
             end_to_end: total.elapsed(),
             live_phase: Duration::ZERO,
-            historical_source: source_time,
+            historical_source,
             coordinator,
             live_records: live_rows.len() as u64,
-            historical_records,
+            historical_records: historical_rows_returned,
             historical_records_scanned,
             historical_entities_looked_up: 0,
-            historical_records_matched: historical_records,
-            bytes_sent_to_historical_source: if strategy == ExecutionStrategy::BindJoin {
-                live_rows.iter().map(|row| row.sensor.len() as u64).sum()
-            } else {
-                0
-            },
-            bytes_received_from_historical_source: historical_bytes,
-            bytes_transferred: live_bytes + historical_bytes,
+            historical_records_matched: historical_records_scanned,
+            bytes_sent_to_historical_source: binding_bytes_sent,
+            bytes_received_from_historical_source: historical_bytes_received,
+            bytes_transferred: live_bytes
+                + binding_bytes_sent
+                + historical_bytes_received,
             source_requests: 2,
             total_sources_declared: 0,
             live_sources_declared: 0,
@@ -431,8 +337,16 @@ pub fn execute(
             live_sources_with_window: 0,
             historical_sources_contacted: 0,
             historical_sources_skipped: 0,
-            raw_records_transferred: 0,
-            aggregate_rows_transferred: 0,
+            raw_records_transferred: if strategy == ExecutionStrategy::FetchAll {
+                historical_rows_returned
+            } else {
+                0
+            },
+            aggregate_rows_transferred: if strategy == ExecutionStrategy::FetchAll {
+                0
+            } else {
+                historical_rows_returned
+            },
             result_cardinality: results.len() as u64,
         },
         results,

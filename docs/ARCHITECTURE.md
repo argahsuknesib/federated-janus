@@ -1,160 +1,114 @@
-# Architecture and execution model
+# Architecture and storage
 
-This document contains the architectural detail intentionally kept out of the top-level README.
+## Query path
 
-## Relationship with Janus
-
-Janus provides the query language and hybrid historical/live semantics. Federated-Janus adds a coordinator that reasons about where a parsed query should execute.
-
-The core pipeline is:
+Federated-Janus uses the current public Janus-QL query form:
 
 ```text
-Janus-QL text
-    │
-    ▼
+Janus-QL
+   │
+   ▼
 JanusQLParser
-    │
-    ▼
+   │
+   ▼
 Janus AST
-    │
-    ▼
-Federated-Janus lowering
-    │
-    ▼
-logical federated query
-    │
-    ▼
-manual physical plan
-    │
-    ▼
-source-specific operators
+   │
+   ▼
+Federated-Janus logical plan
+   │
+   ▼
+explicit physical strategy
 ```
 
-The coordinator does not construct benchmark semantics directly in Rust. Query structure, source IRIs, windows, aggregates, grouping, and HAVING conditions are derived from parsed Janus-QL. Federated-Janus uses the current public Janus-QL window form directly and does not generate the deprecated `DEFINE BASELINE` / `USING BASELINE` compatibility syntax.
+Query structure, windows, aggregates, grouping, and HAVING conditions are derived from parsed Janus-QL. Deprecated `DEFINE BASELINE` / `USING BASELINE` compatibility syntax is not generated.
 
-## Single-query federation
+## Physical strategies
 
-Federation is represented as **one logical Janus-QL query**. For multi-source anomaly detection, top-level `UNION` branches keep source-pair computations independent.
+The historical-scale experiment compares three strategies for the same logical query.
 
-Conceptually:
+### FetchAll
 
 ```text
-branch(sensor 1)
-UNION
-branch(sensor 2)
-UNION
-...
-branch(sensor N)
+historical source
+      │
+      │ raw historical quads
+      ▼
+ coordinator
+      │
+      AVG + join + HAVING
 ```
 
-Federated-Janus lowers this structure into source-specific branch fragments. The logical branch structure is discovered from the parsed AST, not benchmark configuration.
-
-## Source model
-
-A sensor source pair contains one live and one historical source:
+### AggregatePushdown
 
 ```text
-Sensor N
-├── https://example.org/sensors/N/live
-└── https://example.org/sensors/N/history
+historical source
+      │
+      AVG per sensor
+      │
+      ▼
+ coordinator
+      │
+      join + HAVING
 ```
 
-Each IRI resolves through the `SourceRegistry` to an independent source instance. Historical instances hold only their own sensor's observations.
-
-This is distinct from the earlier entity-selectivity prototype, where many sensor entities lived inside one shared live source and one shared historical source.
-
-## Logical query versus physical plan
-
-The logical query defines what result is required. A physical plan defines how it is produced.
-
-Implemented source-oriented strategies include:
-
-- `FetchAllSources` — fetch complete historical windows and aggregate centrally
-- `AggregateAllSources` — compute historical averages at every historical source
-- `LiveFirstSourceSelection` — evaluate live branches first and skip histories for empty live branches
-
-The metadata planning workload adds the following explicit plans:
-
-- `CentralFetchAll`
-- `AggregateAll`
-- `LiveFirst`
-- `MetadataFirst`
-- `LiveMetadataSemiJoin`
-
-These are manually selected experimental strategies. Federated-Janus does not automatically choose among them yet.
-
-## Source-local execution
-
-When a physical operator is pushed down, it executes at the source abstraction before an intermediate result is returned to the coordinator.
-
-Examples:
+### BindJoin
 
 ```text
-HistoricalAVG  -> historical source
-MetadataFilter -> metadata source
-LiveWindow     -> live source
+live bindings
+      │
+      ▼
+historical source
+      │
+filter to bound sensors
+      │
+AVG selected sensors
+      │
+      ▼
+ coordinator
 ```
 
-The current deployment is in-process, so transfer metrics model logical wire traffic rather than measured network traffic.
+The plan names describe data-flow strategies. They do not imply that Janus currently has every possible physical index needed to make each strategy I/O-selective.
 
-## Continuous execution
+## Janus segmented storage
 
-The continuous benchmark registers the parsed/lowered plan once and then evaluates it repeatedly.
+Historical quads are persisted using `janus::storage::segmented_storage::StreamingSegmentedStorage`.
 
-Current live-stream configuration:
+The benchmark adapter writes RDF quads through Janus's dictionary encoder and forces periodic segment flushes. The default benchmark uses at most 100,000 quads per segment.
 
-- 4 Hz per publishing source
-- one observation every 250 ms
-- `RANGE 60`
-- `STEP 30`
-- half-open live windows `[T - 60s, T)`
+The Janus storage layout contains:
 
-After the initial fill, a continuously publishing source has approximately 240 observations in its current window and approximately 120 new observations between evaluations.
+- `dictionary.bin` — persisted RDF-term dictionary
+- `segment-*.log` — fixed-size dictionary-encoded event records
+- `segment-*.idx` — sparse timestamp index entries
 
-The coordinator uses one shared evaluation instant for all branches. `LiveFirstSourceSelection` discovers which branches are active by evaluating live windows; active source IDs are not passed directly from benchmark configuration.
+The underlying Janus `Event` record contains:
 
-## Metadata input
-
-Static metadata is expressed with standard SPARQL named-graph syntax:
-
-```sparql
-GRAPH <https://example.org/metadata> {
-  ?sensor ex:locatedIn ex:RoomA .
-}
+```text
+timestamp : u64
+subject   : u32
+predicate : u32
+object    : u32
+graph     : u32
 ```
 
-This did not require a Janus grammar extension.
+which is a 24-byte encoded record before filesystem/index overhead.
 
-The metadata predicate creates a second selectivity dimension independent of live activity. Plans can therefore compare live-first, metadata-first, central joins, and semijoin-style execution before accessing history.
+Historical reads use Janus's half-open `query_rdf_half_open(start, end)` adapter and therefore preserve Janus-QL's half-open historical window semantics.
 
-## Byte accounting
+## Indexing limitation
 
-Transfer accounting excludes purely local processing and counts intermediate data crossing the conceptual source/coordinator boundary.
+The current segmented storage performs sparse/two-level **timestamp** indexing. It does not expose a subject/predicate inverted index for this benchmark.
 
-The controlled planning study uses one consistent logical wire model:
+Therefore, when the query's historical time window contains the whole generated archive:
 
-- live RDF row: 80 B
-- metadata RDF triple: 72 B
-- aggregate tuple: 48 B
-- sensor-key binding: 40 B
-- raw historical RDF row: 80 B
+- FetchAll scans the full historical archive.
+- AggregatePushdown scans the full historical archive and returns aggregates.
+- BindJoin also scans the full historical archive, filters bound subjects at the source, and returns fewer aggregates.
 
-Operator metrics include input/output rows, bytes sent/received, request counts, execution time, and operator location.
+This means a BindJoin result with fewer transferred bytes must not be described as fewer disk records scanned. A future subject-aware index could change that behavior and would be a separate experiment.
 
-## Janus integration boundary
+## Live side
 
-The repository intentionally supports a narrow subset of Janus-QL relevant to the research workloads. It is not an arbitrary federated SPARQL engine.
+The historical-scale benchmark intentionally keeps the live side fixed. The default contains 10 live sensor bindings inside the parsed 60-second live window.
 
-Current work depends on Janus parser/AST support for:
-
-- multiple named windows
-- `ON STREAM`
-- `ON LOG`
-- `WINDOW` graph patterns
-- aggregates such as `AVG`
-- `GROUP BY`
-- filters
-- nested subqueries where supported
-- top-level `UNION` branch structure
-
-The `UNION` structure was added upstream to Janus so branch-local `WINDOW` blocks are preserved structurally rather than flattened into raw `WHERE` text.
+The live workload is fixed for every historical archive size.

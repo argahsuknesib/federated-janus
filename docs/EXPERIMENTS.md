@@ -1,174 +1,92 @@
-# Experiments and benchmark methodology
+# Benchmark methodology
 
-The top-level README describes only the current system. This document records the experimental progression and the purpose of each benchmark. Current query fixtures express historical aggregation directly with `WINDOW`, `AVG`, `GROUP BY`, and `HAVING`; the old baseline compatibility syntax is not used.
+## Research question
 
-Generated CSVs and benchmark-specific plots are local artifacts and are not versioned. Stable documentation figures live in `docs/figures/`.
+> How do FetchAll, AggregatePushdown, and BindJoin behave as the amount of historical RDF data grows when all three use Janus's segmented storage implementation?
 
-## 1. Shared-source entity selectivity
+The benchmark varies only the historical archive size.
 
-The earliest experiments used one live source and one historical source containing many sensor entities.
+## Independent variable
 
-The compared plans were:
-
-- `FetchAll`
-- `AggregatePushdown`
-- `BindJoin`
-
-These experiments answer entity-selectivity questions inside a shared source. They should not be described as federation-width experiments.
-
-### Historical population
-
-The live side is fixed while the historical archive grows. The experiment studies whether a bound/indexed lookup can keep historical work proportional to the relevant live entities rather than the full archive.
-
-Documentation figures:
-
-- [historical-scale latency](figures/historical_scale_latency.png)
-- [historical work](figures/historical_scale_work.png)
-- [historical-scale transfer](figures/historical_scale_bytes.png)
-
-### Live-side coverage
-
-A fixed historical archive is queried with increasing live-side coverage. This shows the workload-dependent crossover between bound historical access and full historical aggregation.
-
-Documentation figures:
-
-- [latency](figures/latency.svg)
-- [transferred bytes](figures/bytes.svg)
-- [historical work](figures/historical_work.svg)
-
-The key interpretation is qualitative: bind-style access is strongest when the live side is selective; its work grows with bound coverage, while full aggregation has a relatively stable full-population cost.
-
-## 2. Source-oriented federation width
-
-The source-oriented model makes each sensor independently addressable:
+Default historical quad counts:
 
 ```text
-N source pairs =
-N live sources +
-N historical sources
+100
+1,000
+10,000
+100,000
+1,000,000
 ```
 
-The benchmark generates one Janus-QL query containing all source-pair anomaly branches connected by `UNION`, parses it once, lowers/decomposes it once, and then reuses the logical plan across repetitions.
+## Fixed workload
 
-Compared strategies:
+The following stay constant:
 
-- `FetchAllSources`
-- `AggregateAllSources`
-- `LiveFirstSourceSelection`
+- historical sensor subjects: 100
+- live sensor bindings: 10
+- query and anomaly threshold
+- evaluation time
+- live window
+- historical window
+- random seed
+- storage configuration
+- physical source topology
 
-The federation-width experiment varies the number of independent source pairs while keeping per-source history fixed.
+The live workload is fixed for every run.
 
-## 3. Active-source selectivity
+## Storage construction
 
-This experiment fixes the federation at 100 source pairs and varies how many live branches contain observations.
+For each historical size, the benchmark creates a fresh temporary Janus `StreamingSegmentedStorage`.
 
-The important mechanism is source pruning:
+Quads are distributed deterministically across 100 sensor subjects and across the historical time interval. The default segment target is 100,000 quads, so a one-million-quad archive produces approximately ten data segments.
 
-```text
-100 histories declared
+Storage construction and flush time are measured separately and excluded from execution latency.
 
-1 active live branch   -> LiveFirst contacts 1 history
-5 active live branches -> LiveFirst contacts 5 histories
-...
-100 active branches    -> LiveFirst contacts all 100 histories
-```
+## Repetitions
 
-`FetchAllSources` and `AggregateAllSources` continue to contact all historical sources.
+Default:
 
-![Historical sources contacted by active live sources](figures/active_selectivity_sources_contacted.svg)
+- one warmup
+- five measured repetitions
+- three physical strategies
 
-This experiment established that the value of live-first source selection depends directly on runtime branch activity.
+Strategy execution order rotates between repetitions to reduce a fixed ordering bias after the shared filesystem cache has warmed.
 
-## 4. Continuous real-time federation
+## Metrics
 
-The real-time benchmark replaces pre-materialized live state with continuously arriving RDF observations.
+Each measurement records:
 
-Configuration:
+- total latency
+- historical-source time
+- coordinator time
+- historical records scanned
+- historical rows returned
+- binding bytes sent
+- historical bytes received
+- total logical transfer bytes
+- source requests
+- result count
+- result hash
+- segmented-storage disk bytes
+- segment count
+- storage build time
 
-- 4 Hz per active source
-- `RANGE 60`
-- `STEP 30`
-- one registered query reused across evaluations
+## Correctness
 
-A deterministic publisher schedule can change which sources are producing observations over time. The coordinator still discovers active branches by evaluating live windows.
+For every archive size, all three strategies must produce the same result count and stable hash. The benchmark aborts on a semantic mismatch.
 
-The main purpose is to validate that source-pruning behavior survives continuous window evolution rather than only isolated snapshots.
+## Interpreting BindJoin
 
-Run:
+The original Janus segmented store has timestamp indexing but no subject/predicate inverted index in the API used here.
+
+As a result, BindJoin receives the live sensor bindings and applies them at the historical source, but the source still scans the selected historical time range. The expected difference is primarily in returned aggregate rows and transferred bytes, not in historical disk records scanned.
+
+This is preferable to using a benchmark-only subject index because it measures the behavior of the actual Janus storage implementation.
+
+## Run
 
 ```sh
-cargo run --release --bin continuous_realtime_benchmark
+cargo run --release --bin historical_scale_benchmark
 ```
 
-## 5. Query planning by transferred bytes
-
-The planning workload adds one independent metadata source to the live/history anomaly query.
-
-Metadata condition:
-
-```sparql
-GRAPH <https://example.org/metadata> {
-  ?sensor ex:locatedIn ex:RoomA .
-}
-```
-
-It varies two independent selectivities:
-
-- fraction of live sources with window results
-- fraction of sensors satisfying the metadata predicate
-
-The controlled study evaluates five explicit plans:
-
-- `CentralFetchAll`
-- `AggregateAll`
-- `LiveFirst`
-- `MetadataFirst`
-- `LiveMetadataSemiJoin`
-
-The main research question is:
-
-> Under which source cardinalities and selectivities does each operator ordering or placement reduce transferred bytes?
-
-The resulting dominance map shows that no single manual plan is byte-minimal over the entire workload space.
-
-![Byte-optimal physical plan](figures/planning_best_plan_bytes.svg)
-
-Observed regions include:
-
-- metadata-first execution when metadata is strongly selective
-- live/metadata semijoin behavior when metadata is broad but live activity is sparse
-- live-first behavior when live activity is sufficiently selective
-- full aggregation becoming competitive when neither predicate prunes useful work
-
-These are empirical workload regions, not an automatic optimizer.
-
-Run:
-
-```sh
-cargo run --release --bin query_planning_bytes_benchmark -- --depth-sensitivity
-```
-
-## Correctness discipline
-
-All benchmark families compare alternative physical plans for the same logical query.
-
-The test harness checks:
-
-- equal result counts
-- stable result hashes
-- source/branch associations
-- no cross-source leakage
-- half-open temporal window behavior
-- consistent evaluation instants
-- source pruning derived from query execution rather than benchmark hints
-
-## Methodological boundary
-
-Current source abstractions execute in-process. Consequently:
-
-- query and operator execution are real within the prototype
-- live publishing is real-time in the continuous benchmark
-- logical transfer accounting represents bytes crossing conceptual source boundaries
-- network latency, serialization stacks, remote failures, and deployment overhead are not yet modeled as a real distributed system
-
-These limitations should be kept explicit when interpreting absolute latency values.
+Generated CSVs and plots stay under the ignored `results-historical-scale/` directory.
