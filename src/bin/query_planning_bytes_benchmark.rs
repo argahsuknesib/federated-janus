@@ -69,7 +69,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     fs::write(a.output_dir.join("operator_measurements.csv"), ops)?;
     fs::write(a.output_dir.join("plan_dominance.csv"), &dominance)?;
     fs::write(a.output_dir.join("summary.csv"), &m)?;
-    fs::write(a.output_dir.join("query_metadata.csv"), "metadata_source,named_graph,live_frequency_hz,live_range_seconds,live_step_seconds,historical_interval,wire_accounting\nhttps://example.org/metadata,https://example.org/metadata,4,60,30,[T-30d,T),live=80;metadata=72;aggregate=48;key=40;raw_history=80\n")?;
+    fs::write(a.output_dir.join("query_metadata.csv"), "metadata_source,named_graph,live_frequency_hz,live_range_seconds,live_step_seconds,historical_interval,wire_accounting\nhttps://example.org/metadata,https://example.org/metadata,4,60,30,[T-30d-60s,T-60s),live=80;metadata=72;aggregate=48;key=40;raw_history=80\n")?;
     if a.depth_sensitivity {
         let mut d = String::from(
             "live_selectivity,metadata_selectivity,historical_depth,plan,total_bytes_transferred\n",

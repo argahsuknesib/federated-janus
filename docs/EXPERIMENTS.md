@@ -1,6 +1,6 @@
 # Experiments and benchmark methodology
 
-The top-level README describes only the current system. This document records the experimental progression and the purpose of each benchmark.
+The top-level README describes only the current system. This document records the experimental progression and the purpose of each benchmark. Current query fixtures express historical aggregation directly with `WINDOW`, `AVG`, `GROUP BY`, and `HAVING`; the old baseline compatibility syntax is not used.
 
 Generated CSVs and benchmark-specific plots are local artifacts and are not versioned. Stable documentation figures live in `docs/figures/`.
 

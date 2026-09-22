@@ -135,7 +135,7 @@ fn eval(
     let mut scan = 0;
     let mut out = Vec::new();
     for id in &selected {
-        let rows = hist[id].materialize_historical_window(t - 2_592_000, t);
+        let rows = hist[id].materialize_historical_window(t - 2_592_060, t - 60);
         scan += hist[id].record_count() as u64;
         if matches!(p, Plan::CentralFetchAll) {
             hb += rows.iter().map(Observation::serialized_bytes).sum::<u64>();

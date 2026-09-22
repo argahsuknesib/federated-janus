@@ -30,7 +30,7 @@ manual physical plan
 source-specific operators
 ```
 
-The coordinator does not construct benchmark semantics directly in Rust. Query structure, source IRIs, windows, aggregates, and filters are derived from parsed Janus-QL.
+The coordinator does not construct benchmark semantics directly in Rust. Query structure, source IRIs, windows, aggregates, grouping, and HAVING conditions are derived from parsed Janus-QL. Federated-Janus uses the current public Janus-QL window form directly and does not generate the deprecated `DEFINE BASELINE` / `USING BASELINE` compatibility syntax.
 
 ## Single-query federation
 

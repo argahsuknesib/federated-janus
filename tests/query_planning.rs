@@ -1,7 +1,15 @@
 use federated_janus::{generate_planning_query, planning, PlanningLogicalQuery, PlanningPlan};
+
 #[test]
 fn static_named_graph_query_parses_and_all_explicit_plans_agree() {
-    let q = PlanningLogicalQuery::from_text(&generate_planning_query(100), 100).unwrap();
+    let text = generate_planning_query(100);
+    assert!(!text.contains("DEFINE BASELINE"));
+    assert!(!text.contains("USING BASELINE"));
+    assert!(text.contains("WINDOW ex:history1"));
+    assert!(text.contains("AVG(?historical)"));
+    assert!(text.contains("HAVING"));
+
+    let q = PlanningLogicalQuery::from_text(&text, 100).unwrap();
     let mut expected = None;
     for p in PlanningPlan::ALL {
         let r = planning::execute(&q, p, 5, 75, 10_000);
@@ -12,6 +20,7 @@ fn static_named_graph_query_parses_and_all_explicit_plans_agree() {
         }
     }
 }
+
 #[test]
 fn independent_assignments_are_not_identical() {
     assert_ne!(planning::active_set(25), planning::eligible_set(25));

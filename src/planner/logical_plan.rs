@@ -1,4 +1,9 @@
 //! Lowering of the deliberately small Janus-QL subset used by this benchmark.
+//!
+//! The public query form follows the current Janus-QL window model directly:
+//! live and historical WINDOW blocks participate in one SPARQL/RSP-QL query.
+//! Deprecated DEFINE BASELINE / USING BASELINE syntax is intentionally not
+//! accepted or generated here.
 use janus::parsing::janusql_parser::{
     JanusQLParser, ParsedJanusQuery, UnionBranch, WindowDefinition,
 };
@@ -15,6 +20,7 @@ pub struct HistoricalAggregate {
     pub output_variable: String,
     pub group_variable: String,
 }
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct GreaterThanMultiplier {
     pub current_variable: String,
@@ -22,8 +28,6 @@ pub struct GreaterThanMultiplier {
     pub multiplier: f64,
 }
 
-/// The query shape understood by the three manually selected federated plans.
-/// It is intentionally not a general Janus-QL federation representation.
 #[derive(Debug, Clone)]
 pub struct LogicalPlan {
     pub live_window: WindowDefinition,
@@ -34,9 +38,6 @@ pub struct LogicalPlan {
     pub condition: GreaterThanMultiplier,
 }
 
-/// One logical Janus-QL query decomposed into its explicit, independent UNION
-/// branches.  This is deliberately not a plan selector: each branch is a
-/// source-specific fragment already expressed by the query author.
 #[derive(Debug, Clone)]
 pub struct FederatedLogicalPlan {
     pub branches: Vec<LogicalPlan>,
@@ -51,20 +52,22 @@ impl FederatedLogicalPlan {
         Self::lower(&parsed)
     }
 
-    /// Lower the UNION structure already represented by Janus.  No source
-    /// pairing or branch inference is performed here.
     pub fn lower(parsed: &ParsedJanusQuery) -> Result<Self, String> {
         Ok(Self::lower_timed(parsed)?.0)
     }
 
-    /// Separates coordinator-level lowering validation from construction of the
-    /// source-specific branch fragments for benchmark setup accounting.
     pub fn lower_timed(parsed: &ParsedJanusQuery) -> Result<(Self, Duration, Duration), String> {
         let lowering_start = Instant::now();
+        reject_deprecated_baseline_syntax(parsed)?;
         if parsed.ast.union_branches.is_empty() {
-            return Err("Federated-Janus requires top-level UNION branches; adjacent WINDOW blocks are conjunctive".into());
+            return Err(
+                "Federated-Janus requires top-level UNION branches; adjacent WINDOW blocks are conjunctive"
+                    .into(),
+            );
         }
+        validate_top_level_aggregate_shape(parsed)?;
         let lowering = lowering_start.elapsed();
+
         let decomposition_start = Instant::now();
         let branches = parsed
             .ast
@@ -80,6 +83,7 @@ impl LogicalPlan {
     pub fn from_file(path: impl AsRef<Path>) -> Result<Self, String> {
         Self::from_text(&fs::read_to_string(path.as_ref()).map_err(|e| e.to_string())?)
     }
+
     pub fn from_text(text: &str) -> Result<Self, String> {
         Self::lower(
             &JanusQLParser::new()
@@ -88,6 +92,7 @@ impl LogicalPlan {
                 .map_err(|e| e.to_string())?,
         )
     }
+
     pub fn historical_bounds(&self, evaluation_time: u64) -> Result<(u64, u64), String> {
         self.historical_window
             .resolve_historical_bounds(evaluation_time)
@@ -95,7 +100,7 @@ impl LogicalPlan {
                 "Janus could not resolve historical bounds for this evaluation time".into()
             })
     }
-    /// The lightweight deterministic live evaluator uses [T - RANGE, T).
+
     pub fn live_bounds(&self, evaluation_time: u64) -> Result<(u64, u64), String> {
         Ok((
             evaluation_time
@@ -104,208 +109,219 @@ impl LogicalPlan {
             evaluation_time,
         ))
     }
+
     pub fn lower(parsed: &ParsedJanusQuery) -> Result<Self, String> {
+        reject_deprecated_baseline_syntax(parsed)?;
         if parsed.live_windows.len() != 1 || parsed.historical_windows.len() != 1 {
-            return Err("Federated-Janus currently requires exactly one live and one historical Janus window".into());
-        }
-        let live_window = parsed.live_windows[0].clone();
-        let historical_window = parsed.historical_windows[0].clone();
-        let baseline = parsed.ast.baseline_definitions.first().ok_or_else(|| {
-            "the benchmark subset requires DEFINE BASELINE for the historical aggregate".to_string()
-        })?;
-        if baseline.source_window != historical_window.window_name {
             return Err(
-                "historical baseline must be defined over the declared historical window".into(),
-            );
-        }
-        let (function, input_variable, output_variable) = parse_avg(&baseline.select_clause)?;
-        let group_variable = baseline
-            .group_by_clause
-            .as_deref()
-            .and_then(|g| g.strip_prefix("GROUP BY"))
-            .map(str::trim)
-            .filter(|g| !g.contains(char::is_whitespace))
-            .ok_or_else(|| "historical AVG requires one GROUP BY variable".to_string())?
-            .to_string();
-        let (live_subject, predicate, current_variable) = parsed
-            .ast
-            .where_windows
-            .iter()
-            .find(|w| same_identifier(&w.identifier, &live_window.window_name, &parsed.prefixes))
-            .ok_or_else(|| "live WINDOW body is missing".to_string())
-            .and_then(|w| parse_triple(&w.body))?;
-        if live_subject != group_variable {
-            return Err(
-                "live triple subject and historical GROUP BY must be the same join variable".into(),
-            );
-        }
-        let (historical_subject, historical_predicate, historical_input) =
-            parse_triple(&baseline.where_clause)?;
-        if historical_subject != group_variable
-            || historical_predicate != predicate
-            || historical_input != input_variable
-        {
-            return Err(
-                "historical baseline must AVG the same predicate grouped by the live join variable"
+                "Federated-Janus currently requires exactly one live and one historical Janus window"
                     .into(),
             );
         }
-        let condition = parse_condition(&parsed.ast.where_clause)?;
-        if condition.current_variable != current_variable
-            || condition.average_variable != output_variable
-        {
-            return Err("FILTER must compare the live value with the named historical AVG".into());
-        }
-        Ok(Self {
+        validate_top_level_aggregate_shape(parsed)?;
+
+        let live_window = parsed.live_windows[0].clone();
+        let historical_window = parsed.historical_windows[0].clone();
+        let live_clause = find_window_body(parsed, &live_window)
+            .ok_or_else(|| "live WINDOW body is missing".to_string())?;
+        let historical_clause = find_window_body(parsed, &historical_window)
+            .ok_or_else(|| "historical WINDOW body is missing".to_string())?;
+
+        lower_pair(
+            parsed,
             live_window,
             historical_window,
-            join_variable: group_variable.clone(),
-            value_predicate: expand(&predicate, &parsed.prefixes),
-            historical_aggregate: HistoricalAggregate {
-                function,
-                input_variable,
-                output_variable,
-                group_variable,
-            },
-            condition,
-        })
+            &live_clause,
+            &historical_clause,
+        )
     }
 
     fn lower_union_branch(parsed: &ParsedJanusQuery, branch: &UnionBranch) -> Result<Self, String> {
-        if branch.where_windows.len() != 1 {
+        if branch.where_windows.len() != 2 {
             return Err(
-                "each federated UNION branch requires exactly one live WINDOW block".into(),
+                "each federated UNION branch requires exactly one live WINDOW and one historical WINDOW"
+                    .into(),
             );
         }
-        let where_window = &branch.where_windows[0];
-        let live_window = parsed
-            .live_windows
-            .iter()
-            .find(|window| {
-                same_identifier(
-                    &where_window.identifier,
-                    &window.window_name,
-                    &parsed.prefixes,
-                )
-            })
-            .cloned()
-            .ok_or_else(|| {
-                "each federated UNION branch WINDOW must refer to a declared live source"
-                    .to_string()
-            })?;
-        let baseline_name = graph_identifier(&branch.body).ok_or_else(|| {
-            "each federated UNION branch requires one historical baseline GRAPH".to_string()
-        })?;
-        let baseline = parsed
-            .ast
-            .baseline_definitions
-            .iter()
-            .find(|definition| same_identifier(&baseline_name, &definition.name, &parsed.prefixes))
-            .ok_or_else(|| "UNION branch GRAPH must name a DEFINE BASELINE".to_string())?;
-        let historical_window = parsed
-            .historical_windows
-            .iter()
-            .find(|window| window.window_name == baseline.source_window)
-            .cloned()
-            .ok_or_else(|| {
-                "baseline must be defined over a declared historical window".to_string()
-            })?;
-        let (function, input_variable, output_variable) = parse_avg(&baseline.select_clause)?;
-        let group_variable = baseline
-            .group_by_clause
-            .as_deref()
-            .and_then(|g| g.strip_prefix("GROUP BY"))
-            .map(str::trim)
-            .filter(|g| !g.contains(char::is_whitespace))
-            .ok_or_else(|| "historical AVG requires one GROUP BY variable".to_string())?
-            .to_string();
-        let (live_subject, predicate, current_variable) = parse_triple(&where_window.body)?;
-        let (historical_subject, historical_predicate, historical_input) =
-            parse_triple(&baseline.where_clause)?;
-        if live_subject != group_variable
-            || historical_subject != group_variable
-            || historical_predicate != predicate
-            || historical_input != input_variable
-        {
-            return Err(
-                "UNION branch must join one live value to the matching historical AVG".into(),
-            );
+
+        let mut live: Option<(WindowDefinition, String)> = None;
+        let mut historical: Option<(WindowDefinition, String)> = None;
+
+        for clause in &branch.where_windows {
+            if let Some(window) = parsed.live_windows.iter().find(|window| {
+                same_identifier(&clause.identifier, &window.window_name, &parsed.prefixes)
+            }) {
+                if live.is_some() {
+                    return Err("each UNION branch may contain only one live WINDOW".into());
+                }
+                live = Some((window.clone(), clause.body.clone()));
+                continue;
+            }
+            if let Some(window) = parsed.historical_windows.iter().find(|window| {
+                same_identifier(&clause.identifier, &window.window_name, &parsed.prefixes)
+            }) {
+                if historical.is_some() {
+                    return Err("each UNION branch may contain only one historical WINDOW".into());
+                }
+                historical = Some((window.clone(), clause.body.clone()));
+                continue;
+            }
+            return Err(format!(
+                "UNION branch references undeclared or unsupported WINDOW '{}'",
+                clause.identifier
+            ));
         }
-        let condition = parse_condition(&branch.body)?;
-        if condition.current_variable != current_variable
-            || condition.average_variable != output_variable
-        {
-            return Err(
-                "UNION branch FILTER must compare its live value with its baseline AVG".into(),
-            );
-        }
-        Ok(Self {
+
+        let (live_window, live_body) =
+            live.ok_or_else(|| "UNION branch is missing its live WINDOW".to_string())?;
+        let (historical_window, historical_body) = historical
+            .ok_or_else(|| "UNION branch is missing its historical WINDOW".to_string())?;
+
+        lower_pair(
+            parsed,
             live_window,
             historical_window,
-            join_variable: group_variable.clone(),
-            value_predicate: expand(&predicate, &parsed.prefixes),
-            historical_aggregate: HistoricalAggregate {
-                function,
-                input_variable,
-                output_variable,
-                group_variable,
-            },
-            condition,
-        })
+            &live_body,
+            &historical_body,
+        )
     }
 }
 
-/// Deterministic Janus-QL text for one independently addressable sensor pair.
-/// The source-oriented benchmark parses and lowers this text for every pair;
-/// it never constructs logical plans directly.
 pub fn sensor_pair_query(sensor_id: u32) -> String {
-    format!("PREFIX ex: <https://example.org/>\n\nFROM NAMED WINDOW ex:live{sensor_id} ON STREAM <https://example.org/sensors/{sensor_id}/live> [RANGE 60 STEP 30]\nFROM NAMED WINDOW ex:history{sensor_id} ON LOG <https://example.org/sensors/{sensor_id}/history> [OFFSET 2592000 RANGE 2592000 STEP 30]\n\nDEFINE BASELINE ex:historicalAverage{sensor_id} ON WINDOW ex:history{sensor_id} AS\nSELECT ?sensor (AVG(?historical) AS ?historicalAverage)\nWHERE {{\n  ?sensor ex:value ?historical .\n}}\nGROUP BY ?sensor\n\nREGISTER RStream ex:anomalies{sensor_id} AS\nUSING BASELINE ex:historicalAverage{sensor_id}\nSELECT ?sensor ?current ?historicalAverage\nWHERE {{\n  WINDOW ex:live{sensor_id} {{\n    ?sensor ex:value ?current .\n  }}\n  GRAPH ex:historicalAverage{sensor_id} {{\n    ?sensor ex:historicalAverage ?historicalAverage .\n  }}\n  FILTER(?current > 1.3 * ?historicalAverage)\n}}\n")
+    format!(
+        "PREFIX ex: <https://example.org/>\n\nREGISTER RStream ex:anomalies{sensor_id} AS\nSELECT ?sensor ?current (AVG(?historical) AS ?historicalAverage)\nFROM NAMED WINDOW ex:live{sensor_id} ON STREAM <https://example.org/sensors/{sensor_id}/live> [RANGE 60 STEP 30]\nFROM NAMED WINDOW ex:history{sensor_id} ON LOG <https://example.org/sensors/{sensor_id}/history> [OFFSET 2592060 RANGE 2592000 STEP 30]\nWHERE {{\n  WINDOW ex:live{sensor_id} {{\n    ?sensor ex:value ?current .\n  }}\n  WINDOW ex:history{sensor_id} {{\n    ?sensor ex:value ?historical .\n  }}\n}}\nGROUP BY ?sensor ?current\nHAVING (?current > 1.3 * AVG(?historical))\n"
+    )
 }
 
-/// Deterministically generates one Janus-QL query whose standard SPARQL UNION
-/// has one independently addressable live/history branch per sensor.
 pub fn generate_federated_anomaly_query(source_count: usize) -> String {
     assert!(
         source_count > 0,
         "a federated query needs at least one source pair"
     );
-    let mut query = String::from("PREFIX ex: <https://example.org/>\n\n");
+    let mut query = String::from(
+        "PREFIX ex: <https://example.org/>\n\nREGISTER RStream ex:anomalies AS\nSELECT ?sensor ?current (AVG(?historical) AS ?historicalAverage)\n",
+    );
     for id in 1..=source_count {
         query.push_str(&format!(
-            "FROM NAMED WINDOW ex:live{id} ON STREAM <https://example.org/sensors/{id}/live> [RANGE 60 STEP 30]\nFROM NAMED WINDOW ex:history{id} ON LOG <https://example.org/sensors/{id}/history> [OFFSET 2592000 RANGE 2592000 STEP 30]\n"
+            "FROM NAMED WINDOW ex:live{id} ON STREAM <https://example.org/sensors/{id}/live> [RANGE 60 STEP 30]\nFROM NAMED WINDOW ex:history{id} ON LOG <https://example.org/sensors/{id}/history> [OFFSET 2592060 RANGE 2592000 STEP 30]\n"
         ));
     }
-    query.push('\n');
-    for id in 1..=source_count {
-        query.push_str(&format!(
-            "DEFINE BASELINE ex:historicalAverage{id} ON WINDOW ex:history{id} AS\nSELECT ?sensor (AVG(?historical) AS ?historicalAverage)\nWHERE {{\n  ?sensor ex:value ?historical .\n}}\nGROUP BY ?sensor\n\n"
-        ));
-    }
-    query.push_str("REGISTER RStream ex:anomalies AS\n");
-    for id in 1..=source_count {
-        query.push_str(&format!("USING BASELINE ex:historicalAverage{id}\n"));
-    }
-    query.push_str("SELECT ?sensor ?current ?historicalAverage\nWHERE {\n");
+    query.push_str("WHERE {\n");
     for id in 1..=source_count {
         if id > 1 {
             query.push_str("  UNION\n");
         }
         query.push_str(&format!(
-            "  {{\n    WINDOW ex:live{id} {{\n      ?sensor ex:value ?current .\n    }}\n    GRAPH ex:historicalAverage{id} {{\n      ?sensor ex:historicalAverage ?historicalAverage .\n    }}\n    FILTER(?current > 1.3 * ?historicalAverage)\n  }}\n"
+            "  {{\n    WINDOW ex:live{id} {{\n      ?sensor ex:value ?current .\n    }}\n    WINDOW ex:history{id} {{\n      ?sensor ex:value ?historical .\n    }}\n  }}\n"
         ));
     }
-    query.push_str("}\n");
+    query.push_str(
+        "}\nGROUP BY ?sensor ?current\nHAVING (?current > 1.3 * AVG(?historical))\n",
+    );
     query
 }
 
-fn graph_identifier(body: &str) -> Option<String> {
-    let start = body.find("GRAPH")? + "GRAPH".len();
-    body[start..].split_whitespace().next().map(str::to_string)
+fn reject_deprecated_baseline_syntax(parsed: &ParsedJanusQuery) -> Result<(), String> {
+    if !parsed.ast.baseline_definitions.is_empty() || !parsed.ast.baseline_uses.is_empty() {
+        return Err(
+            "DEFINE BASELINE / USING BASELINE are deprecated and are not accepted by Federated-Janus"
+                .into(),
+        );
+    }
+    Ok(())
 }
+
+fn validate_top_level_aggregate_shape(parsed: &ParsedJanusQuery) -> Result<(), String> {
+    if parsed.ast.group_by_clause.is_none() {
+        return Err("historical AVG query requires a top-level GROUP BY clause".into());
+    }
+    if parsed.ast.having_clause.is_none() {
+        return Err("anomaly query requires a top-level HAVING comparison".into());
+    }
+    parse_avg(&parsed.ast.select_clause)?;
+    Ok(())
+}
+
+fn find_window_body(parsed: &ParsedJanusQuery, window: &WindowDefinition) -> Option<String> {
+    parsed
+        .ast
+        .where_windows
+        .iter()
+        .find(|clause| same_identifier(&clause.identifier, &window.window_name, &parsed.prefixes))
+        .map(|clause| clause.body.clone())
+}
+
+fn lower_pair(
+    parsed: &ParsedJanusQuery,
+    live_window: WindowDefinition,
+    historical_window: WindowDefinition,
+    live_body: &str,
+    historical_body: &str,
+) -> Result<LogicalPlan, String> {
+    let (live_subject, predicate, current_variable) = parse_triple(live_body)?;
+    let (historical_subject, historical_predicate, historical_input) =
+        parse_triple(historical_body)?;
+    if live_subject != historical_subject || predicate != historical_predicate {
+        return Err(
+            "live and historical WINDOW blocks must join on the same subject and predicate".into(),
+        );
+    }
+
+    let (function, input_variable, output_variable) = parse_avg(&parsed.ast.select_clause)?;
+    if input_variable != historical_input {
+        return Err("top-level AVG must aggregate the historical WINDOW value variable".into());
+    }
+
+    let group_vars = parse_group_by_variables(
+        parsed
+            .ast
+            .group_by_clause
+            .as_deref()
+            .ok_or_else(|| "historical AVG requires GROUP BY".to_string())?,
+    )?;
+    if !group_vars.contains(&live_subject) || !group_vars.contains(&current_variable) {
+        return Err(
+            "GROUP BY must include the shared sensor variable and the current live value".into(),
+        );
+    }
+
+    let (having_current, multiplier, having_historical) = parse_having_condition(
+        parsed
+            .ast
+            .having_clause
+            .as_deref()
+            .ok_or_else(|| "anomaly query requires HAVING".to_string())?,
+    )?;
+    if having_current != current_variable || having_historical != input_variable {
+        return Err(
+            "HAVING must compare the live value with the AVG of the historical value variable"
+                .into(),
+        );
+    }
+
+    Ok(LogicalPlan {
+        live_window,
+        historical_window,
+        join_variable: live_subject.clone(),
+        value_predicate: expand(&predicate, &parsed.prefixes),
+        historical_aggregate: HistoricalAggregate {
+            function,
+            input_variable,
+            output_variable: output_variable.clone(),
+            group_variable: live_subject,
+        },
+        condition: GreaterThanMultiplier {
+            current_variable,
+            average_variable: output_variable,
+            multiplier,
+        },
+    })
+}
+
 fn parse_avg(select: &str) -> Result<(String, String, String), String> {
     let start = select
         .find("AVG(")
-        .ok_or_else(|| "historical baseline must contain AVG(...) AS ?variable".to_string())?
+        .ok_or_else(|| "SELECT must contain AVG(?historical) AS ?variable".to_string())?
         + 4;
     let end = select[start..]
         .find(')')
@@ -326,49 +342,87 @@ fn parse_avg(select: &str) -> Result<(String, String, String), String> {
     }
     Ok(("AVG".into(), input, output))
 }
+
+fn parse_group_by_variables(group_by: &str) -> Result<Vec<String>, String> {
+    let rest = group_by
+        .trim()
+        .strip_prefix("GROUP BY")
+        .ok_or_else(|| "GROUP BY clause must start with GROUP BY".to_string())?;
+    let vars = rest
+        .split_whitespace()
+        .filter(|v| v.starts_with('?'))
+        .map(str::to_string)
+        .collect::<Vec<_>>();
+    if vars.is_empty() {
+        return Err("GROUP BY must contain variables".into());
+    }
+    Ok(vars)
+}
+
+fn parse_having_condition(having: &str) -> Result<(String, f64, String), String> {
+    let mut expr = having
+        .trim()
+        .strip_prefix("HAVING")
+        .ok_or_else(|| "HAVING clause must start with HAVING".to_string())?
+        .trim();
+    if expr.starts_with('(') && expr.ends_with(')') {
+        expr = expr[1..expr.len() - 1].trim();
+    }
+    let (current, rhs) = expr
+        .split_once('>')
+        .ok_or_else(|| "HAVING must use >".to_string())?;
+    let current = current.trim().to_string();
+    if !current.starts_with('?') {
+        return Err("HAVING left-hand side must be a variable".into());
+    }
+
+    let (multiplier, aggregate) = if let Some((factor, aggregate)) = rhs.split_once('*') {
+        (
+            factor
+                .trim()
+                .parse::<f64>()
+                .map_err(|_| "HAVING multiplier must be numeric".to_string())?,
+            aggregate.trim(),
+        )
+    } else {
+        (1.0, rhs.trim())
+    };
+    let avg_start = aggregate
+        .find("AVG(")
+        .ok_or_else(|| "HAVING must compare against AVG(?historical)".to_string())?
+        + 4;
+    let avg_end = aggregate[avg_start..]
+        .find(')')
+        .ok_or_else(|| "unterminated AVG in HAVING".to_string())?
+        + avg_start;
+    let historical = aggregate[avg_start..avg_end].trim().to_string();
+    if !historical.starts_with('?') {
+        return Err("HAVING AVG input must be a variable".into());
+    }
+    Ok((current, multiplier, historical))
+}
+
 fn parse_triple(body: &str) -> Result<(String, String, String), String> {
     let line = body
         .lines()
         .map(str::trim)
-        .find(|l| !l.is_empty() && !l.starts_with("WHERE") && !l.starts_with('{'))
+        .find(|line| !line.is_empty() && !line.starts_with('{'))
         .ok_or_else(|| "expected a triple pattern".to_string())?
         .trim_end_matches('.')
         .trim();
-    let p: Vec<_> = line.split_whitespace().collect();
-    if p.len() != 3 || !p[0].starts_with('?') || !p[2].starts_with('?') {
+    let parts: Vec<_> = line.split_whitespace().collect();
+    if parts.len() != 3 || !parts[0].starts_with('?') || !parts[2].starts_with('?') {
         return Err("benchmark subset requires ?subject predicate ?object triple patterns".into());
     }
-    Ok((p[0].into(), p[1].into(), p[2].into()))
+    Ok((parts[0].into(), parts[1].into(), parts[2].into()))
 }
-fn parse_condition(where_clause: &str) -> Result<GreaterThanMultiplier, String> {
-    let start = where_clause.find("FILTER(").ok_or_else(|| {
-        "benchmark subset requires FILTER(?current > multiplier * ?average)".to_string()
-    })? + 7;
-    let end = where_clause[start..]
-        .find(')')
-        .ok_or_else(|| "unterminated FILTER".to_string())?
-        + start;
-    let (current, rhs) = where_clause[start..end]
-        .trim()
-        .split_once('>')
-        .ok_or_else(|| "FILTER must use >".to_string())?;
-    let (multiplier, average) = rhs
-        .split_once('*')
-        .ok_or_else(|| "FILTER must multiply historical average".to_string())?;
-    Ok(GreaterThanMultiplier {
-        current_variable: current.trim().into(),
-        multiplier: multiplier
-            .trim()
-            .parse()
-            .map_err(|_| "FILTER multiplier must be numeric")?,
-        average_variable: average.trim().into(),
-    })
-}
+
 fn expand(term: &str, prefixes: &std::collections::HashMap<String, String>) -> String {
     term.split_once(':')
-        .and_then(|(p, local)| prefixes.get(p).map(|base| format!("{base}{local}")))
+        .and_then(|(prefix, local)| prefixes.get(prefix).map(|base| format!("{base}{local}")))
         .unwrap_or_else(|| term.trim_matches(&['<', '>'][..]).into())
 }
+
 fn same_identifier(
     identifier: &str,
     name: &str,
