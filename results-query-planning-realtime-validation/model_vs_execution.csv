@@ -1,6 +1,0 @@
-workload_id,predicted_min_byte_plan,observed_min_byte_plan
-A,MetadataFirst,MetadataFirst
-B,LiveMetadataSemiJoin,LiveMetadataSemiJoin
-C,MetadataFirst,MetadataFirst
-D,MetadataFirst,MetadataFirst
-E,AggregateAll,AggregateAll

@@ -1,6 +1,0 @@
-A,MetadataFirst,LiveMetadataSemiJoin,588,6.627333,142940,0.265167
-B,LiveMetadataSemiJoin,LiveMetadataSemiJoin,285875,7.234084,286708,7.015334
-C,MetadataFirst,MetadataFirst,142791,9.354834,142791,9.354834
-D,MetadataFirst,LiveMetadataSemiJoin,3138890,153.201959,4572537,125.994833
-E,AggregateAll,LiveFirst,7411300,322.982958,7427945,315.882625
-workload_id,byte_optimal_plan,latency_optimal_plan,bytes_of_byte_optimal,latency_of_byte_optimal,bytes_of_latency_optimal,latency_of_latency_optimal
