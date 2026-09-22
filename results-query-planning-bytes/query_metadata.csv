@@ -1,2 +1,0 @@
-metadata_source,named_graph,live_frequency_hz,live_range_seconds,live_step_seconds,historical_interval,wire_accounting
-https://example.org/metadata,https://example.org/metadata,4,60,30,[T-30d,T),live=80;metadata=72;aggregate=48;key=40;raw_history=80

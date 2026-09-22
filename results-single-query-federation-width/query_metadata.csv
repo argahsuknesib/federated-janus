@@ -1,7 +1,0 @@
-source_pairs,logical_query_count,logical_branch_count,active_live_fraction,active_live_sources,active_rounding_rule,query_parse_ms,query_lowering_ms,query_decomposition_ms,live_window,historical_window
-1,1,1,0.1,1,ceil(source_pairs/10) with minimum 1,0.214750,0.025000,0.025000,[2999940,3000000),[408000, 3000000)
-5,1,5,0.1,1,ceil(source_pairs/10) with minimum 1,0.088583,0.014083,0.014083,[2999940,3000000),[408000, 3000000)
-10,1,10,0.1,1,ceil(source_pairs/10) with minimum 1,0.130583,0.026584,0.026584,[2999940,3000000),[408000, 3000000)
-25,1,25,0.1,3,ceil(source_pairs/10) with minimum 1,0.270208,0.086125,0.086125,[2999940,3000000),[408000, 3000000)
-50,1,50,0.1,5,ceil(source_pairs/10) with minimum 1,0.481167,0.269625,0.269625,[2999940,3000000),[408000, 3000000)
-100,1,100,0.1,10,ceil(source_pairs/10) with minimum 1,0.922041,0.964709,0.964709,[2999940,3000000),[408000, 3000000)

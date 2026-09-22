@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="470" viewBox="0 0 760 470" role="img" aria-labelledby="title desc">
+<title id="title">Latency vs live-side coverage</title>
+<desc id="desc">Median execution latency by live-side coverage.</desc>
+<style>text{font-family:system-ui,-apple-system,Segoe UI,sans-serif;font-size:13px}.axis{stroke:currentColor;stroke-width:1}.grid{stroke:currentColor;stroke-opacity:.16;stroke-width:1}.series{fill:none;stroke:currentColor;stroke-width:2}.legend{font-size:12px}.title{font-size:18px;font-weight:600}.label{font-size:14px}</style>
+<text class="title" x="380" y="27" text-anchor="middle">Latency vs live-side coverage</text>
+<line class="axis" x1="90" y1="55" x2="90" y2="395"/>
+<line class="axis" x1="90" y1="395" x2="735" y2="395"/>
+<line class="grid" x1="90" y1="395.0" x2="735" y2="395.0"/>
+<text x="80" y="399.0" text-anchor="end">0.00</text>
+<line class="grid" x1="90" y1="327.0" x2="735" y2="327.0"/>
+<text x="80" y="331.0" text-anchor="end">6.35</text>
+<line class="grid" x1="90" y1="259.0" x2="735" y2="259.0"/>
+<text x="80" y="263.0" text-anchor="end">12.7</text>
+<line class="grid" x1="90" y1="191.0" x2="735" y2="191.0"/>
+<text x="80" y="195.0" text-anchor="end">19.1</text>
+<line class="grid" x1="90" y1="123.0" x2="735" y2="123.0"/>
+<text x="80" y="127.0" text-anchor="end">25.4</text>
+<line class="grid" x1="90" y1="55.0" x2="735" y2="55.0"/>
+<text x="80" y="59.0" text-anchor="end">31.8</text>
+<line class="grid" x1="90.0" y1="55" x2="90.0" y2="395"/>
+<text x="90.0" y="417" text-anchor="middle">0.01</text>
+<line class="grid" x1="90.6" y1="55" x2="90.6" y2="395"/>
+<text x="90.6" y="417" text-anchor="middle">0.1</text>
+<line class="grid" x1="96.4" y1="55" x2="96.4" y2="395"/>
+<text x="96.4" y="417" text-anchor="middle">1</text>
+<line class="grid" x1="122.2" y1="55" x2="122.2" y2="395"/>
+<text x="122.2" y="417" text-anchor="middle">5</text>
+<line class="grid" x1="154.4" y1="55" x2="154.4" y2="395"/>
+<text x="154.4" y="417" text-anchor="middle">10</text>
+<line class="grid" x1="251.2" y1="55" x2="251.2" y2="395"/>
+<text x="251.2" y="417" text-anchor="middle">25</text>
+<line class="grid" x1="283.5" y1="55" x2="283.5" y2="395"/>
+<text x="283.5" y="417" text-anchor="middle">30</text>
+<line class="grid" x1="315.7" y1="55" x2="315.7" y2="395"/>
+<text x="315.7" y="417" text-anchor="middle">35</text>
+<line class="grid" x1="412.5" y1="55" x2="412.5" y2="395"/>
+<text x="412.5" y="417" text-anchor="middle">50</text>
+<line class="grid" x1="573.7" y1="55" x2="573.7" y2="395"/>
+<text x="573.7" y="417" text-anchor="middle">75</text>
+<line class="grid" x1="735.0" y1="55" x2="735.0" y2="395"/>
+<text x="735.0" y="417" text-anchor="middle">100</text>
+<text class="label" x="412.5" y="452" text-anchor="middle">Live-side coverage (%)</text>
+<text class="label" x="20" y="225" text-anchor="middle" transform="rotate(-90 20 225)">Median execution latency (ms)</text>
+<polyline class="series" points="90.0,310.0 90.6,315.7 96.4,323.4 122.2,320.7 154.4,319.9 251.2,309.7 283.5,305.8 315.7,277.3 412.5,289.4 573.7,283.3 735.0,259.2"/>
+<circle cx="90.0" cy="310.0" r="3.5" fill="currentColor"/>
+<circle cx="90.6" cy="315.7" r="3.5" fill="currentColor"/>
+<circle cx="96.4" cy="323.4" r="3.5" fill="currentColor"/>
+<circle cx="122.2" cy="320.7" r="3.5" fill="currentColor"/>
+<circle cx="154.4" cy="319.9" r="3.5" fill="currentColor"/>
+<circle cx="251.2" cy="309.7" r="3.5" fill="currentColor"/>
+<circle cx="283.5" cy="305.8" r="3.5" fill="currentColor"/>
+<circle cx="315.7" cy="277.3" r="3.5" fill="currentColor"/>
+<circle cx="412.5" cy="289.4" r="3.5" fill="currentColor"/>
+<circle cx="573.7" cy="283.3" r="3.5" fill="currentColor"/>
+<circle cx="735.0" cy="259.2" r="3.5" fill="currentColor"/>
+<line class="series" x1="540" y1="63" x2="568" y2="63"/>
+<text class="legend" x="576" y="67">FetchAll</text>
+<polyline class="series" stroke-dasharray="8 4" points="90.0,316.2 90.6,322.2 96.4,322.5 122.2,321.1 154.4,318.2 251.2,307.1 283.5,307.5 315.7,294.0 412.5,287.4 573.7,283.1 735.0,259.8"/>
+<rect x="86.7" y="312.9" width="6.6" height="6.6" fill="currentColor"/>
+<rect x="87.3" y="318.9" width="6.6" height="6.6" fill="currentColor"/>
+<rect x="93.1" y="319.2" width="6.6" height="6.6" fill="currentColor"/>
+<rect x="118.9" y="317.8" width="6.6" height="6.6" fill="currentColor"/>
+<rect x="151.1" y="314.9" width="6.6" height="6.6" fill="currentColor"/>
+<rect x="247.9" y="303.8" width="6.6" height="6.6" fill="currentColor"/>
+<rect x="280.2" y="304.2" width="6.6" height="6.6" fill="currentColor"/>
+<rect x="312.4" y="290.7" width="6.6" height="6.6" fill="currentColor"/>
+<rect x="409.2" y="284.1" width="6.6" height="6.6" fill="currentColor"/>
+<rect x="570.4" y="279.8" width="6.6" height="6.6" fill="currentColor"/>
+<rect x="731.7" y="256.5" width="6.6" height="6.6" fill="currentColor"/>
+<line class="series" stroke-dasharray="8 4" x1="540" y1="84" x2="568" y2="84"/>
+<text class="legend" x="576" y="88">AggregatePushdown</text>
+<polyline class="series" stroke-dasharray="2 3" points="90.0,395.0 90.6,394.9 96.4,393.8 122.2,386.1 154.4,368.7 251.2,321.8 283.5,301.4 315.7,262.1 412.5,243.5 573.7,69.1 735.0,55.0"/>
+<path d="M 90.0 391.0 L 86.0 398.5 L 94.0 398.5 Z" fill="currentColor"/>
+<path d="M 90.6 390.9 L 86.6 398.4 L 94.6 398.4 Z" fill="currentColor"/>
+<path d="M 96.4 389.8 L 92.4 397.3 L 100.4 397.3 Z" fill="currentColor"/>
+<path d="M 122.2 382.1 L 118.2 389.6 L 126.2 389.6 Z" fill="currentColor"/>
+<path d="M 154.4 364.7 L 150.4 372.2 L 158.4 372.2 Z" fill="currentColor"/>
+<path d="M 251.2 317.8 L 247.2 325.3 L 255.2 325.3 Z" fill="currentColor"/>
+<path d="M 283.5 297.4 L 279.5 304.9 L 287.5 304.9 Z" fill="currentColor"/>
+<path d="M 315.7 258.1 L 311.7 265.6 L 319.7 265.6 Z" fill="currentColor"/>
+<path d="M 412.5 239.5 L 408.5 247.0 L 416.5 247.0 Z" fill="currentColor"/>
+<path d="M 573.7 65.1 L 569.7 72.6 L 577.7 72.6 Z" fill="currentColor"/>
+<path d="M 735.0 51.0 L 731.0 58.5 L 739.0 58.5 Z" fill="currentColor"/>
+<line class="series" stroke-dasharray="2 3" x1="540" y1="105" x2="568" y2="105"/>
+<text class="legend" x="576" y="109">BindJoin</text>
+</svg>
