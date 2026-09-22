@@ -1,0 +1,10 @@
+[package]
+name = "federated-janus"
+version = "0.1.0"
+edition = "2021"
+description = "Federated query planning, join optimization, and distributed execution for Janus-QL over historical RDF data and live RDF streams."
+
+[dependencies]
+janus = { path = "../janus" }
+clap = { version = "4.5", features = ["derive"] }
+
