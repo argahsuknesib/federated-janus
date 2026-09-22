@@ -8,7 +8,7 @@ The project studies operator placement, join strategies, aggregation pushdown, t
 
 ## Current use case
 
-The fixed anomaly workload identifies current readings above a per-sensor historical baseline:
+The benchmark parses an actual Janus-QL query (`queries/anomaly.janusql`) and lowers the relevant historical/live query structure into alternative Federated-Janus physical execution plans. It identifies current readings above a per-sensor historical baseline:
 
 ```text
 live observations             historical observations
@@ -22,6 +22,54 @@ live observations             historical observations
 ```
 
 All three physical plans preserve this logical result.
+
+```text
+                 Janus-QL
+                    │
+                    ▼
+             JanusQLParser
+                    │
+                    ▼
+                Janus AST
+                    │
+                    ▼
+         Federated-Janus lowering
+                    │
+                    ▼
+                 Log
+```
+
+The canonical query declares a 60-second live window with a 5-second step and
+a historical sliding window with `OFFSET = RANGE = 30 days`. Janus resolves
+that historical interval as `[T - OFFSET, T - OFFSET + RANGE)`, therefore
+`[T - 30d, T)`. The benchmark uses one deterministic evaluation time `T` for
+both sides.
+
+The executed query is real Janus-QL (the fixture is authoritative):
+
+```sparql
+PREFIX ex: <https://example.org/>
+FROM NAMED WINDOW ex:live ON STREAM ex:live-sensors [RANGE 60 STEP 5]
+FROM NAMED WINDOW ex:history ON LOG ex:historical-sensors [OFFSET 2592000 RANGE 2592000 STEP 5]
+
+DEFINE BASELINE ex:historicalAverage ON WINDOW ex:history AS
+SELECT ?sensor (AVG(?historical) AS ?historicalAverage)
+WHERE { ?sensor ex:value ?historical . }
+GROUP BY ?sensor
+
+REGISTER RStream ex:anomalies AS
+USING BASELINE ex:historicalAverage
+SELECT ?sensor ?current ?historicalAverage
+WHERE {
+  WINDOW ex:live { ?sensor ex:value ?current . }
+  GRAPH ex:historicalAverage { ?sensor ex:historicalAverage ?historicalAverage . }
+  FILTER(?current > 1.3 * ?historicalAverage)
+}
+```
+
+The execution pipeline is `anomaly.janusql → JanusQLParser → Janus AST →
+Federated-Janus lowering → logical hybrid query → FetchAll /
+AggregatePushdown / BindJoin`.
 
 ### FetchAll
 
@@ -54,44 +102,44 @@ Live source -> distinct sensor IDs -> historical source index
 
 The historical source accesses only sensor partitions referenced by the live window.
 
-## Preliminary experimental results
+## Preliminary Janus-QL-driven results
 
-These are **preliminary experimental results**, not publication-final claims. The benchmark uses a compact internal `SensorId -> Vec<(timestamp, value)>` representation to avoid RDF-string allocation dominating plan costs. It preserves the fixed workload semantics but is not a replacement for Janus RDF storage.
-
-The 10M-row diagnostic used one deterministic shared dataset:
+These are **preliminary**, not publication-final results. The 10M-row campaign used the actual parsed [anomaly.janusql](queries/anomaly.janusql) path, one shared deterministic historical dataset, one warmup, and three measured repetitions per strategy/cardinality. Parser and lowering work were performed once per invocation (0.199 ms and 0.004 ms in this run) and excluded from execution latency.
 
 ```text
 Historical sensors:       100,000
 Observations per sensor:  100
 Historical observations: 10,000,000
-Warmups / measurements:   1 / 3
+Live cardinalities:       10 to 100,000 (including 30,000 and 35,000)
 ```
-
-Tested live cardinalities: 10, 100, 1,000, 5,000, 10,000, 25,000, 50,000, 75,000, and 100,000. Every configuration verified equal canonical result hashes across plans.
 
 | Live sensors | Live fraction | FetchAll median ms | AggregatePushdown median ms | BindJoin median ms |
 |---:|---:|---:|---:|---:|
-| 10 | 0.01% | 7.856 | 7.271 | 0.001 |
-| 100 | 0.1% | 7.555 | 6.902 | 0.012 |
-| 1,000 | 1% | 6.736 | 6.890 | 0.113 |
-| 5,000 | 5% | 7.086 | 6.917 | 0.941 |
-| 10,000 | 10% | 6.954 | 7.139 | 2.109 |
-| 25,000 | 25% | 8.137 | 7.943 | 6.983 |
-| 50,000 | 50% | 9.556 | 9.329 | 14.410 |
-| 75,000 | 75% | 10.694 | 10.362 | 22.798 |
-| 100,000 | 100% | 11.661 | 11.812 | 31.294 |
+| 10 | 0.01% | 7.935 | 7.359 | 0.001 |
+| 100 | 0.1% | 7.409 | 6.801 | 0.011 |
+| 1,000 | 1% | 6.691 | 6.769 | 0.115 |
+| 5,000 | 5% | 6.940 | 6.904 | 0.834 |
+| 10,000 | 10% | 7.016 | 7.169 | 2.456 |
+| 25,000 | 25% | 7.971 | 8.208 | 6.841 |
+| 30,000 | 30% | 8.336 | 8.175 | 8.744 |
+| 35,000 | 35% | 10.995 | 9.433 | 12.416 |
+| 50,000 | 50% | 9.862 | 10.048 | 14.149 |
+| 75,000 | 75% | 10.437 | 10.451 | 30.445 |
+| 100,000 | 100% | 12.688 | 12.633 | 31.757 |
 
-A refinement found BindJoin faster at 30% coverage (8.321 ms vs 8.452 ms) and AggregatePushdown faster at 35% (8.329 ms vs 9.909 ms). The observed crossover therefore lies between approximately 30% and 35% live-side coverage. This threshold must not be generalized to other workloads, distributions, storage engines, or network settings. FetchAll transfers roughly 240 MB here and is primarily a correctness/reference baseline.
+All three strategies had equal result count and stable result hash at every cardinality. FetchAll transferred about 240 MB per execution; AggregatePushdown transferred about 1.2–2.4 MB; BindJoin ranged from 280 bytes to 2.8 MB as its bindings grew. FetchAll and AggregatePushdown each scanned 10M historical observations (100%); BindJoin scanned 0.01% at 10 live sensors and scales to 100% at full coverage.
+
+The median crossover is between 25% and 30% coverage: BindJoin is lower at 25%, while AggregatePushdown is lower at 30% and 35%. This is an observed workload-specific region rather than a universal threshold. It moved below the earlier prototype's reported 30–35% interval. Peak RSS was not recorded.
 
 ## Diagnostic figures
 
-![Median latency versus live-side cardinality](docs/figures/latency.svg)
+![Median execution latency by live-side coverage](docs/figures/latency.svg)
 
-![Mean transferred bytes versus live-side cardinality](docs/figures/bytes.svg)
+![Mean transferred data by live-side coverage](docs/figures/bytes.svg)
 
-![Mean historical records scanned versus live-side cardinality](docs/figures/historical_work.svg)
+![Historical observations scanned by live-side coverage](docs/figures/historical_work.svg)
 
-README-facing copies live under `docs/figures/`; raw diagnostic artifacts remain under `results-full-diagnostic/`.
+README-facing copies live under `docs/figures/`; the query-driven raw artifacts are in `results-janusql-full/`. Earlier `results*` directories remain preserved prototype results from the fixed Rust logical-query stage and are not the headline measurements.
 
 ## Preliminary observations
 
@@ -103,7 +151,7 @@ The following observations are limited to the measured two-source workload:
 - BindJoin cost increases with the number of live bindings.
 - Different physical plans become preferable under different workload characteristics.
 
-These findings motivate further investigation of explicit physical execution strategies. They do not establish a general threshold or claim an automatic optimizer; automatic planning is optional future work.
+These findings reproduce the prototype's qualitative behavior: FetchAll transfers far more data, BindJoin is strongest for selective live inputs and grows with bound historical work, and AggregatePushdown scans the full historical population. They do not establish a general threshold or claim an automatic optimizer; automatic planning is optional future work.
 
 ## Next use case: three-source anomaly detection
 
@@ -185,10 +233,10 @@ Phase 5 — Optional future optimization
 
 ## Running
 
-Run one explicit plan:
+Run one explicit plan using the canonical query:
 
 ```sh
-cargo run --bin federated_janus -- --strategy bind-join --live-sensors 100 --csv experiments/smoke.csv
+cargo run --release --bin federated_benchmark -- --query queries/anomaly.janusql --strategy bind-join --live-sensor-counts 100 --repetitions 1 --warmups 0
 ```
 
 Run the full diagnostic defaults:
@@ -201,4 +249,6 @@ The runner records measured repetitions only, verifies result hashes, and writes
 
 ## Janus integration boundary
 
-Janus exports its parser/AST, historical storage, historical executor, Oxigraph adapter, live processor, and RDF event model. Its historical indexes are timestamp-oriented and do not expose subject-indexed bound lookup. Federated-Janus therefore leaves Janus unchanged and uses a compact benchmark-specific index only for selective-access experiments.
+Janus exports its parser/AST, historical storage, historical executor, Oxigraph adapter, live processor, and RDF event model. This milestone supports only the parsed anomaly-query subset: one `ON STREAM` live window, one `ON LOG` historical window, a baseline `AVG` grouped by the shared subject variable, and `FILTER(?current > multiplier * ?average)`. It does not implement arbitrary Janus-QL federation or automatic plan selection.
+
+For this first integration the live side is a lightweight deterministic temporal evaluator, not `rsp-rs`: it applies the parsed live `RANGE` and `STEP` to timestamped synthetic events using `[T - RANGE, T)`. The historical side remains the compact indexed benchmark source, but receives the exact interval resolved by Janus's `WindowDefinition`; it is not Janus production storage.

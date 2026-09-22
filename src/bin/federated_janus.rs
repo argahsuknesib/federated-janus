@@ -40,13 +40,23 @@ struct Args {
     random_seed: u64,
     #[arg(long)]
     csv: Option<PathBuf>,
+    #[arg(long, default_value = "queries/anomaly.janusql")]
+    query: PathBuf,
 }
-fn data(a: &Args) -> (InMemoryLiveSource, InMemoryHistoricalSource) {
+fn data(
+    a: &Args,
+    plan: &LogicalPlan,
+    evaluation_time: u64,
+) -> Result<(InMemoryLiveSource, InMemoryHistoricalSource), String> {
+    let (historical_start, historical_end) = plan.historical_bounds(evaluation_time)?;
+    let (live_start, _) = plan.live_bounds(evaluation_time)?;
     let mut h = Vec::new();
     for s in 0..a.historical_sensors {
         for i in 0..a.historical_observations_per_sensor {
             h.push(Observation::new(
-                i as u64,
+                historical_start
+                    + ((i as u64 + 1) * (historical_end - historical_start)
+                        / (a.historical_observations_per_sensor as u64 + 1)),
                 format!("https://example.org/sensor{s}"),
                 100.0 + (i % 5) as f64,
             ));
@@ -67,18 +77,20 @@ fn data(a: &Args) -> (InMemoryLiveSource, InMemoryHistoricalSource) {
         for i in 0..a.live_observations_per_sensor {
             let anomaly = (s as f64 / a.live_sensors.max(1) as f64) < a.anomaly_fraction;
             l.push(Observation::new(
-                1_000_000 + i as u64,
+                live_start + 1 + i as u64,
                 format!("https://example.org/sensor{s}"),
                 if anomaly { 200.0 } else { 100.0 },
             ));
         }
     }
-    (InMemoryLiveSource::new(l), InMemoryHistoricalSource::new(h))
+    Ok((InMemoryLiveSource::new(l), InMemoryHistoricalSource::new(h)))
 }
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let a = Args::parse();
-    let (l, h) = data(&a);
-    let out = execute(a.strategy.into(), &LogicalPlan::default(), &l, &h)?;
+    let plan = LogicalPlan::from_file(&a.query)?;
+    let evaluation_time = 3_000_000;
+    let (l, h) = data(&a, &plan, evaluation_time)?;
+    let out = execute(a.strategy.into(), &plan, &l, &h, evaluation_time)?;
     println!(
         "strategy={} results={} bytes={}",
         out.metrics.strategy.as_str(),
@@ -91,7 +103,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             format!(
                 "{}\n{}\n",
                 federated_janus::metrics::ExecutionMetrics::csv_header(),
-                out.metrics.csv_row(l.materialize_live_window().len())
+                out.metrics.csv_row(
+                    l.materialize_live_window(
+                        plan.live_bounds(evaluation_time)?.0,
+                        evaluation_time
+                    )
+                    .len()
+                )
             ),
         )?;
     }

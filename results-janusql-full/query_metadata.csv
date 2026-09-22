@@ -1,0 +1,2 @@
+query,query_parse_ms,query_lowering_ms,evaluation_time,live_source,live_range,live_step,live_start,live_end,historical_source,historical_offset,historical_range,historical_step,historical_start,historical_end,join_variable,group_variable,aggregate,aggregate_input,aggregate_output,predicate,threshold
+queries/anomaly.janusql,0.199125,0.004125,3000000,https://example.org/live-sensors,60,5,2999940,3000000,https://example.org/historical-sensors,2592000,2592000,5,408000,3000000,?sensor,?sensor,AVG,?historical,?historicalAverage,https://example.org/value,1.3

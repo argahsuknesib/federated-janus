@@ -31,19 +31,29 @@ impl std::error::Error for ExecutionError {}
 pub fn execute_compact(
     strategy: ExecutionStrategy,
     plan: &LogicalPlan,
-    live: &[(u32, f64)],
+    live_events: &[(u32, u64, f64)],
     history: &CompactHistoricalSource,
-    start: u64,
-    end: u64,
+    evaluation_time: u64,
 ) -> ExecutionOutcome {
+    let (historical_start, historical_end) = plan
+        .historical_bounds(evaluation_time)
+        .expect("validated Janus historical window");
+    let (live_start, live_end) = plan
+        .live_bounds(evaluation_time)
+        .expect("validated Janus live window");
+    let live: Vec<(u32, f64)> = live_events
+        .iter()
+        .filter(|(_, timestamp, _)| *timestamp >= live_start && *timestamp < live_end)
+        .map(|(sensor, _, value)| (*sensor, *value))
+        .collect();
     let total = Instant::now();
     let source = Instant::now();
     let (averages, stats) = match strategy {
         ExecutionStrategy::BindJoin => {
             let bound: HashSet<u32> = live.iter().map(|(s, _)| *s).collect();
-            history.aggregate_bound(&bound, start, end)
+            history.aggregate_bound(&bound, historical_start, historical_end)
         }
-        _ => history.aggregate_all(start, end),
+        _ => history.aggregate_all(historical_start, historical_end),
     };
     let historical_source = source.elapsed();
     let coordinator = Instant::now();
@@ -52,7 +62,7 @@ pub fn execute_compact(
         .filter_map(|(sensor, current)| {
             averages
                 .get(sensor)
-                .filter(|avg| *current > plan.anomaly_multiplier * *avg)
+                .filter(|avg| *current > plan.condition.multiplier * *avg)
                 .map(|avg| Anomaly {
                     sensor: format!("https://example.org/sensor{sensor}"),
                     current_value: *current,
@@ -99,13 +109,24 @@ pub fn execute(
     plan: &LogicalPlan,
     live: &dyn LiveSource,
     history: &dyn HistoricalSource,
+    evaluation_time: u64,
 ) -> Result<ExecutionOutcome, ExecutionError> {
+    let live_bounds = plan.live_bounds(evaluation_time).map_err(ExecutionError)?;
+    let historical_bounds = plan
+        .historical_bounds(evaluation_time)
+        .map_err(ExecutionError)?;
     let total = Instant::now();
     let source_start = Instant::now();
     let (live_rows, averages): (Vec<Observation>, HashMap<String, f64>) = match strategy {
-        ExecutionStrategy::FetchAll => strategies::fetch_all::run(live, history),
-        ExecutionStrategy::AggregatePushdown => strategies::aggregate_pushdown::run(live, history),
-        ExecutionStrategy::BindJoin => strategies::bind_join::run(live, history),
+        ExecutionStrategy::FetchAll => {
+            strategies::fetch_all::run(live, history, live_bounds, historical_bounds)
+        }
+        ExecutionStrategy::AggregatePushdown => {
+            strategies::aggregate_pushdown::run(live, history, live_bounds, historical_bounds)
+        }
+        ExecutionStrategy::BindJoin => {
+            strategies::bind_join::run(live, history, live_bounds, historical_bounds)
+        }
     };
     let source_time = source_start.elapsed();
     let coord = Instant::now();
@@ -114,7 +135,7 @@ pub fn execute(
         .filter_map(|o| {
             averages
                 .get(&o.sensor)
-                .filter(|avg| o.value > plan.anomaly_multiplier * *avg)
+                .filter(|avg| o.value > plan.condition.multiplier * *avg)
                 .map(|avg| Anomaly {
                     sensor: o.sensor.clone(),
                     current_value: o.value,
@@ -128,17 +149,19 @@ pub fn execute(
             .then(a.current_value.total_cmp(&b.current_value))
     });
     let historical_records = match strategy {
-        ExecutionStrategy::FetchAll => history.materialize_historical_window().len() as u64,
+        ExecutionStrategy::FetchAll => history
+            .materialize_historical_window(historical_bounds.0, historical_bounds.1)
+            .len() as u64,
         _ => averages.len() as u64,
     };
     let historical_records_scanned = history.record_count() as u64;
     let historical_bytes: u64 = match strategy {
         ExecutionStrategy::FetchAll => history
-            .materialize_historical_window()
+            .materialize_historical_window(historical_bounds.0, historical_bounds.1)
             .iter()
             .map(Observation::serialized_bytes)
             .sum(),
-        _ => averages.iter().map(|(s, _)| (s.len() + 8) as u64).sum(),
+        _ => averages.keys().map(|s| (s.len() + 8) as u64).sum(),
     };
     let live_bytes: u64 = live_rows.iter().map(Observation::serialized_bytes).sum();
     let coordinator = coord.elapsed();
@@ -160,11 +183,7 @@ pub fn execute(
             },
             bytes_received_from_historical_source: historical_bytes,
             bytes_transferred: live_bytes + historical_bytes,
-            source_requests: if strategy == ExecutionStrategy::BindJoin {
-                2
-            } else {
-                2
-            },
+            source_requests: 2,
             result_cardinality: results.len() as u64,
         },
         results,

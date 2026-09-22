@@ -20,14 +20,22 @@ pub struct CompactHistoricalSource {
     by_sensor: Vec<Vec<HistoricalObservation>>,
 }
 impl CompactHistoricalSource {
-    pub fn deterministic(sensors: usize, observations_per_sensor: usize, seed: u64) -> Self {
+    pub fn deterministic(
+        sensors: usize,
+        observations_per_sensor: usize,
+        seed: u64,
+        start: u64,
+        end: u64,
+    ) -> Self {
         let base = 100.0 + (seed % 5) as f64;
         Self {
             by_sensor: (0..sensors)
                 .map(|_| {
                     (0..observations_per_sensor)
                         .map(|i| HistoricalObservation {
-                            timestamp: i as u64,
+                            timestamp: start
+                                + ((i as u64 + 1) * (end - start)
+                                    / (observations_per_sensor as u64 + 1)),
                             value: base + (i % 5) as f64,
                         })
                         .collect()

@@ -1,4 +1,8 @@
 use federated_janus::*;
+const T: u64 = 3_000_000;
+fn plan() -> LogicalPlan {
+    LogicalPlan::from_text(include_str!("../queries/anomaly.janusql")).unwrap()
+}
 fn sources(
     live: Vec<(&str, f64)>,
     historical: Vec<(&str, f64)>,
@@ -6,13 +10,13 @@ fn sources(
     (
         InMemoryLiveSource::new(
             live.into_iter()
-                .map(|(s, v)| Observation::new(1, s, v))
+                .map(|(s, v)| Observation::new(T - 1, s, v))
                 .collect(),
         ),
         InMemoryHistoricalSource::new(
             historical
                 .into_iter()
-                .map(|(s, v)| Observation::new(0, s, v))
+                .map(|(s, v)| Observation::new(T - 100, s, v))
                 .collect(),
         ),
     )
@@ -24,7 +28,7 @@ fn all(l: &InMemoryLiveSource, h: &InMemoryHistoricalSource) -> Vec<Vec<Anomaly>
         ExecutionStrategy::BindJoin,
     ]
     .into_iter()
-    .map(|s| execute(s, &LogicalPlan::default(), l, h).unwrap().results)
+    .map(|s| execute(s, &plan(), l, h, T).unwrap().results)
     .collect()
 }
 #[test]
@@ -67,7 +71,7 @@ fn duplicate_history_aggregates() {
 #[test]
 fn bind_restriction_is_correct() {
     let (l, h) = sources(vec![("a", 140.)], vec![("a", 100.), ("other", 1.)]);
-    let r = execute(ExecutionStrategy::BindJoin, &LogicalPlan::default(), &l, &h).unwrap();
+    let r = execute(ExecutionStrategy::BindJoin, &plan(), &l, &h, T).unwrap();
     assert_eq!(r.metrics.historical_records, 1);
     assert_eq!(r.results.len(), 1)
 }
