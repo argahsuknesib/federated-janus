@@ -1,5 +1,7 @@
 # Federated-Janus
 
+Benchmark outputs are generated locally under `results*` directories and are intentionally not tracked. README-facing figures are kept under `docs/figures/` so the repository stays small and the documentation remains self-contained.
+
 ## Continuous real-time federation experiment
 
 Previous experiments are deterministic single evaluations over synthetic window
@@ -14,8 +16,8 @@ Run the five-pair wall-clock smoke experiment (about two minutes):
 cargo run --release --bin continuous_realtime_benchmark
 ```
 
-It writes `results-continuous-realtime/` without changing existing federation
-width/selectivity results.  `--source-pairs 10 --active-schedule 2,5,10`
+It writes local artifacts to `results-continuous-realtime/`. All `results*`
+directories are ignored by Git and are not published in the repository.  `--source-pairs 10 --active-schedule 2,5,10`
 demonstrates dynamic source activity.  The schedule controls publishers only;
 `LiveFirstSourceSelection` discovers active branches from the live windows.
 
@@ -43,12 +45,15 @@ inputs, not an optimizer and are never automatically selected.
 cargo run --release --bin query_planning_bytes_benchmark -- --depth-sensitivity
 ```
 
-This writes `results-query-planning-bytes/measurements.csv`, operator-level
-measurements, a plan-dominance matrix, query metadata, and SVGs. Bytes are a
+This writes local artifacts under `results-query-planning-bytes/`, including
+measurements, operator-level metrics, a plan-dominance matrix, query metadata,
+and plots. These generated artifacts are intentionally ignored by Git. Bytes are a
 consistent logical wire representation: live RDF row 80 B, metadata RDF triple
 72 B, aggregate tuple 48 B, sensor-key binding 40 B, and raw historical RDF
 row 80 B. Local source processing is excluded. The dominance map is evidence
 for a possible future cost model; it does not implement one.
+
+![Byte-optimal physical plan across live activity and metadata selectivity](docs/figures/planning_best_plan_bytes.svg)
 
 Janus provides unified continuous querying over historical RDF data and live RDF streams. Federated-Janus is a narrow experimental framework for measuring how equivalent hybrid queries behave under different physical plans when their logical sources are distinct. The present goal is not automatic optimization: plans are explicit and manually selected.
 
@@ -183,8 +188,8 @@ execution time before deciding which historical sources to contact.
 The deterministic active set is the source-ID prefix of size
 `max(1, ceil(source_pairs / 10))`: therefore 1/5/10 source pairs have one
 active live source, 25 has three, 50 has five, and 100 has ten. The benchmark
-writes raw rows, summaries, query metadata, and plots to
-`results-single-query-federation-width/`; parser/lowering/decomposition timing
+writes raw rows, summaries, query metadata, and plots locally under
+`results-single-query-federation-width/` (ignored by Git); parser/lowering/decomposition timing
 is recorded in metadata and excluded from repeated execution latency.
 
 ```sh
@@ -227,7 +232,7 @@ is close to `AggregateAllSources` in this synthetic run (28.491 versus 29.466
 ms median). This does not establish a general crossover or automatic plan
 choice. `FetchAllSources` remains the raw-transfer correctness baseline.
 
-![Historical sources contacted by active live sources](docs/figures/active_selectivity_sources_contacted.png)
+![Historical sources contacted by active live sources](docs/figures/active_selectivity_sources_contacted.svg)
 
 ![Median latency by active live sources](docs/figures/active_selectivity_latency.png)
 
@@ -235,7 +240,7 @@ choice. `FetchAllSources` remains the raw-transfer correctness baseline.
 
 ![Transferred data by active live sources](docs/figures/active_selectivity_bytes.png)
 
-Artifacts are in `results-single-query-active-selectivity/`. This is distinct
+Running the benchmark generates local artifacts under `results-single-query-active-selectivity/` (ignored by Git). This is distinct
 from Experiment 1: Experiment 1 varied the number of source pairs near 10%
 activity, whereas Experiment 2 fixes 100 source pairs and varies live-branch
 activity.
@@ -308,13 +313,13 @@ The median crossover is between 25% and 30% coverage: BindJoin is lower at 25%, 
 
 ### Figures
 
-![Median execution latency by live-side coverage](docs/figures/latency.png)
+![Median execution latency by live-side coverage](docs/figures/latency.svg)
 
-![Mean transferred data by live-side coverage](docs/figures/bytes.png)
+![Mean transferred data by live-side coverage](docs/figures/bytes.svg)
 
-![Historical observations scanned by live-side coverage](docs/figures/historical_work.png)
+![Historical observations scanned by live-side coverage](docs/figures/historical_work.svg)
 
-README-facing copies live under `docs/figures/`; raw query-driven artifacts are in `results-janusql-historical-scale/` and `results-janusql-full/`. Earlier `results*` directories remain preserved prototype results from the fixed Rust logical-query stage and are not the headline measurements.
+README-facing figures live under `docs/figures/`. Raw benchmark outputs are generated locally under ignored `results*` directories and are not versioned.
 
 ### Interpretation
 

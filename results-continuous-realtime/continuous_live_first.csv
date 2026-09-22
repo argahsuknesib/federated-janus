@@ -1,4 +1,0 @@
-evaluation_index,elapsed_s,execution_latency_ms,historical_sources_contacted,live_sources_with_results,historical_records_scanned
-0,60.003,0.114875,1,1,1
-1,90.005,0.235125,3,3,3
-2,120.002,0.468542,5,5,5
