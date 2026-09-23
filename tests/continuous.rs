@@ -3,7 +3,9 @@ use federated_janus::{
     Observation, RegisteredContinuousQuery, SensorSourcePair, SourceRegistry,
 };
 
-const T0: u64 = 3_000_000;
+// Continuous clocks are milliseconds and must accommodate the Janus-QL
+// 30-day historical OFFSET after conversion to milliseconds.
+const T0: u64 = 3_000_000_000;
 
 fn registered(n: usize) -> (RegisteredContinuousQuery, SourceRegistry) {
     let plan = FederatedLogicalPlan::from_text(&generate_federated_anomaly_query(n)).unwrap();

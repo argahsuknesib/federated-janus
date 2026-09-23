@@ -6,14 +6,10 @@
 //! intentional: BindJoin can reduce returned rows/bytes without pretending the
 //! underlying segmented store can skip unrelated subjects.
 use super::{HistoricalSource, Observation};
-use janus::storage::{
-    segmented_storage::StreamingSegmentedStorage,
-    util::StreamingConfig,
-};
+use janus::storage::{segmented_storage::StreamingSegmentedStorage, util::StreamingConfig};
 use std::{
     collections::{HashMap, HashSet},
-    fs,
-    io,
+    fs, io,
     path::{Path, PathBuf},
 };
 

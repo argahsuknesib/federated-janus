@@ -108,12 +108,10 @@ fn threshold_is_query_driven_from_having() {
             .len(),
         1
     );
-    assert!(
-        execute(ExecutionStrategy::FetchAll, &stricter, &l, &h, T)
-            .unwrap()
-            .results
-            .is_empty()
-    );
+    assert!(execute(ExecutionStrategy::FetchAll, &stricter, &l, &h, T)
+        .unwrap()
+        .results
+        .is_empty());
 }
 
 #[test]

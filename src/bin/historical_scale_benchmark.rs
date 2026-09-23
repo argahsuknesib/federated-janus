@@ -6,12 +6,7 @@ use federated_janus::{
     SegmentedHistoricalSource,
 };
 use janus::parsing::janusql_parser::JanusQLParser;
-use std::{
-    fs,
-    path::PathBuf,
-    process,
-    time::Instant,
-};
+use std::{fs, path::PathBuf, process, time::Instant};
 
 #[derive(Parser)]
 struct Args {
@@ -131,7 +126,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if args.historical_quads.is_empty()
         || args.historical_quads.contains(&0)
         || args.historical_sensors == 0
-        || args.historical_quads.iter().any(|&n| n < args.historical_sensors)
+        || args
+            .historical_quads
+            .iter()
+            .any(|&n| n < args.historical_sensors)
         || args.live_sensors == 0
         || args.live_sensors > args.historical_sensors
         || args.segment_quads == 0
@@ -216,9 +214,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
 
         for repetition in 0..args.repetitions {
-            for (execution_order, strategy) in
-                strategies_for(repetition).into_iter().enumerate()
-            {
+            for (execution_order, strategy) in strategies_for(repetition).into_iter().enumerate() {
                 let outcome = execute(strategy, &plan, &live, &history, evaluation_time)?;
                 let result_hash = hash(&outcome.results);
 
@@ -310,9 +306,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ] {
             let group: Vec<_> = rows
                 .iter()
-                .filter(|row| {
-                    row.historical_quads == quad_count && row.strategy == strategy
-                })
+                .filter(|row| row.historical_quads == quad_count && row.strategy == strategy)
                 .collect();
             let latencies: Vec<_> = group.iter().map(|row| row.latency_ms).collect();
             summary.push_str(&format!(
@@ -331,7 +325,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         .map(|row| row.coordinator_ms)
                         .collect::<Vec<_>>()
                 ),
-                mean(&group.iter().map(|row| row.scanned as f64).collect::<Vec<_>>()),
+                mean(
+                    &group
+                        .iter()
+                        .map(|row| row.scanned as f64)
+                        .collect::<Vec<_>>()
+                ),
                 mean(
                     &group
                         .iter()
@@ -349,12 +348,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             ));
         }
     }
-    fs::write(args.output_dir.join("historical_scale_summary.csv"), summary)?;
+    fs::write(
+        args.output_dir.join("historical_scale_summary.csv"),
+        summary,
+    )?;
 
     fs::write(
         args.output_dir.join("query_metadata.csv"),
         format!(
-            "query,storage_backend,historical_quads,fixed_historical_sensors,fixed_live_sensors,segment_quads,query_parse_ms,query_lowering_ms,evaluation_time,live_window,historical_window,indexing_note\n{},Janus StreamingSegmentedStorage,"{}",{},{},{},{parse_ms:.6},{lowering_ms:.6},{evaluation_time},"[{live_start},{live_end})","[{historical_start},{historical_end})","timestamp sparse/two-level index; no subject/predicate inverted index"\n",
+            "query,storage_backend,historical_quads,fixed_historical_sensors,fixed_live_sensors,segment_quads,query_parse_ms,query_lowering_ms,evaluation_time,live_window,historical_window,indexing_note\n{},Janus StreamingSegmentedStorage,\"{}\",{},{},{},{parse_ms:.6},{lowering_ms:.6},{evaluation_time},\"[{live_start},{live_end})\",\"[{historical_start},{historical_end})\",\"timestamp sparse/two-level index; no subject/predicate inverted index\"\n",
             args.query.display(),
             args.historical_quads
                 .iter()

@@ -13,6 +13,8 @@ use std::{
     time::{Duration, Instant},
 };
 
+pub type TimestampBounds = (u64, u64);
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct HistoricalAggregate {
     pub function: String,
@@ -80,6 +82,7 @@ impl FederatedLogicalPlan {
 }
 
 impl LogicalPlan {
+    const MILLISECONDS_PER_SECOND: u64 = 1_000;
     pub fn from_file(path: impl AsRef<Path>) -> Result<Self, String> {
         Self::from_text(&fs::read_to_string(path.as_ref()).map_err(|e| e.to_string())?)
     }
@@ -107,6 +110,44 @@ impl LogicalPlan {
                 .checked_sub(self.live_window.width)
                 .ok_or_else(|| "evaluation time precedes live RANGE".to_string())?,
             evaluation_time,
+        ))
+    }
+
+    /// Resolve both Janus-QL windows for a millisecond clock.  Janus-QL window
+    /// literals are seconds, whereas continuously published RDF events carry
+    /// millisecond timestamps.
+    pub fn continuous_bounds_ms(
+        &self,
+        evaluation_time_ms: u64,
+    ) -> Result<(TimestampBounds, TimestampBounds), String> {
+        let historical_offset_ms = self
+            .historical_window
+            .offset
+            .ok_or_else(|| "historical window has no OFFSET".to_string())?
+            .checked_mul(Self::MILLISECONDS_PER_SECOND)
+            .ok_or_else(|| "historical OFFSET overflows milliseconds".to_string())?;
+        let historical_range_ms = self
+            .historical_window
+            .width
+            .checked_mul(Self::MILLISECONDS_PER_SECOND)
+            .ok_or_else(|| "historical RANGE overflows milliseconds".to_string())?;
+        let historical_start = evaluation_time_ms
+            .checked_sub(historical_offset_ms)
+            .ok_or_else(|| "evaluation time precedes historical OFFSET".to_string())?;
+        let historical_end = historical_start
+            .checked_add(historical_range_ms)
+            .ok_or_else(|| "historical RANGE overflows milliseconds".to_string())?;
+        let live_range_ms = self
+            .live_window
+            .width
+            .checked_mul(Self::MILLISECONDS_PER_SECOND)
+            .ok_or_else(|| "live RANGE overflows milliseconds".to_string())?;
+        let live_start = evaluation_time_ms
+            .checked_sub(live_range_ms)
+            .ok_or_else(|| "evaluation time precedes live RANGE".to_string())?;
+        Ok((
+            (historical_start, historical_end),
+            (live_start, evaluation_time_ms),
         ))
     }
 
@@ -215,9 +256,7 @@ pub fn generate_federated_anomaly_query(source_count: usize) -> String {
             "  {{\n    WINDOW ex:live{id} {{\n      ?sensor ex:value ?current .\n    }}\n    WINDOW ex:history{id} {{\n      ?sensor ex:value ?historical .\n    }}\n  }}\n"
         ));
     }
-    query.push_str(
-        "}\nGROUP BY ?sensor ?current\nHAVING (?current > 1.3 * AVG(?historical))\n",
-    );
+    query.push_str("}\nGROUP BY ?sensor ?current\nHAVING (?current > 1.3 * AVG(?historical))\n");
     query
 }
 

@@ -1,8 +1,7 @@
 use federated_janus::{HistoricalSource, SegmentedHistoricalSource};
 use std::{
     collections::HashSet,
-    fs,
-    process,
+    fs, process,
     sync::atomic::{AtomicU64, Ordering},
 };
 
@@ -20,8 +19,7 @@ fn temp_path() -> std::path::PathBuf {
 fn janus_segmented_storage_materializes_and_aggregates_quads() {
     let path = temp_path();
     let source =
-        SegmentedHistoricalSource::deterministic(&path, 1_000, 100, 7, 1_000, 11_000, 100)
-            .unwrap();
+        SegmentedHistoricalSource::deterministic(&path, 1_000, 100, 7, 1_000, 11_000, 100).unwrap();
 
     assert_eq!(source.record_count(), 1_000);
     assert_eq!(source.segment_count().unwrap(), 10);
@@ -50,8 +48,13 @@ fn segmented_storage_uses_half_open_historical_bounds() {
     let source =
         SegmentedHistoricalSource::deterministic(&path, 100, 100, 7, 1_000, 2_000, 100).unwrap();
 
-    assert_eq!(source.materialize_historical_window(1_000, 2_000).len(), 100);
-    assert!(source.materialize_historical_window(2_000, 3_000).is_empty());
+    assert_eq!(
+        source.materialize_historical_window(1_000, 2_000).len(),
+        100
+    );
+    assert!(source
+        .materialize_historical_window(2_000, 3_000)
+        .is_empty());
 
     drop(source);
     fs::remove_dir_all(path).unwrap();

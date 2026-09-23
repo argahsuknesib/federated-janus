@@ -59,6 +59,18 @@ def main():
             out / "historical_scale_latency.png",
             log_y=True,
         )
+
+    for summary in root.rglob("continuous_historical_scale_summary.csv"):
+        rows = read(summary)
+        out = summary.parent / "plots"
+        for field, title, label, name in [
+            ("median_latency_ms", "Median execution latency vs historical archive size", "Median execution latency (ms)", "continuous_historical_scale_latency.png"),
+            ("mean_historical_records_scanned", "Historical records scanned vs archive size", "Historical records scanned", "continuous_historical_scale_scanned.png"),
+            ("mean_historical_records_returned", "Historical records returned vs archive size", "Historical records returned", "continuous_historical_scale_returned.png"),
+            ("mean_transferred_bytes", "Logical bytes transferred vs archive size", "Logical bytes transferred", "continuous_historical_scale_bytes.png"),
+            ("mean_historical_source_ms", "Historical-source execution time vs archive size", "Historical-source execution time (ms)", "continuous_historical_scale_historical_source.png"),
+        ]:
+            grouped(rows, field, title, label, out / name, log_y=True)
         grouped(
             rows,
             "mean_transferred_bytes",

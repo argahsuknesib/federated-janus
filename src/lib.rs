@@ -8,8 +8,8 @@ pub mod strategies;
 
 pub use continuous::RegisteredContinuousQuery;
 pub use executor::{
-    execute, execute_federated, execute_federated_continuous, execute_source_oriented, Anomaly,
-    ExecutionError, ExecutionOutcome,
+    execute, execute_continuous, execute_federated, execute_federated_continuous,
+    execute_source_oriented, Anomaly, ExecutionError, ExecutionOutcome,
 };
 pub use planner::{
     generate_federated_anomaly_query, sensor_pair_query, ExecutionStrategy, FederatedLogicalPlan,

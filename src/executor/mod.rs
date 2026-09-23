@@ -119,15 +119,13 @@ fn execute_source_oriented_with_live_unit(
                 "Janus-QL live and historical IRIs do not identify the same sensor pair".into(),
             ));
         }
-        let start = evaluation_time
-            .checked_sub(
-                plan.live_window
-                    .width
-                    .checked_mul(live_unit)
-                    .ok_or_else(|| ExecutionError("live range overflows timestamp unit".into()))?,
-            )
-            .ok_or_else(|| ExecutionError("evaluation time precedes live RANGE".into()))?;
-        let end = evaluation_time;
+        let (start, end) = if live_unit == 1_000 {
+            plan.continuous_bounds_ms(evaluation_time)
+                .map_err(ExecutionError)?
+                .1
+        } else {
+            plan.live_bounds(evaluation_time).map_err(ExecutionError)?
+        };
         live_by_sensor.insert(
             pair.sensor_id,
             (pair.live.materialize_live_window(start, end), pair, plan),
@@ -150,9 +148,14 @@ fn execute_source_oriented_with_live_unit(
     let mut historical_scanned = 0u64;
     let mut bytes_received = 0u64;
     for (_, pair, plan) in &selected {
-        let (start, end) = plan
-            .historical_bounds(evaluation_time)
-            .map_err(ExecutionError)?;
+        let (start, end) = if live_unit == 1_000 {
+            plan.continuous_bounds_ms(evaluation_time)
+                .map_err(ExecutionError)?
+                .0
+        } else {
+            plan.historical_bounds(evaluation_time)
+                .map_err(ExecutionError)?
+        };
         match strategy {
             ExecutionStrategy::FetchAllSources => {
                 let rows = pair.historical.materialize_historical_window(start, end);
@@ -244,6 +247,46 @@ pub fn execute(
     history: &dyn HistoricalSource,
     evaluation_time: u64,
 ) -> Result<ExecutionOutcome, ExecutionError> {
+    execute_with_bounds(
+        strategy,
+        plan,
+        live,
+        history,
+        plan.live_bounds(evaluation_time).map_err(ExecutionError)?,
+        plan.historical_bounds(evaluation_time)
+            .map_err(ExecutionError)?,
+    )
+}
+
+/// Execute one lowered query against millisecond continuous timestamps.
+pub fn execute_continuous(
+    strategy: ExecutionStrategy,
+    plan: &LogicalPlan,
+    live: &dyn LiveSource,
+    history: &dyn HistoricalSource,
+    evaluation_time_ms: u64,
+) -> Result<ExecutionOutcome, ExecutionError> {
+    let (historical_bounds, live_bounds) = plan
+        .continuous_bounds_ms(evaluation_time_ms)
+        .map_err(ExecutionError)?;
+    execute_with_bounds(
+        strategy,
+        plan,
+        live,
+        history,
+        live_bounds,
+        historical_bounds,
+    )
+}
+
+fn execute_with_bounds(
+    strategy: ExecutionStrategy,
+    plan: &LogicalPlan,
+    live: &dyn LiveSource,
+    history: &dyn HistoricalSource,
+    live_bounds: (u64, u64),
+    historical_bounds: (u64, u64),
+) -> Result<ExecutionOutcome, ExecutionError> {
     if matches!(
         strategy,
         ExecutionStrategy::FetchAllSources
@@ -254,11 +297,6 @@ pub fn execute(
             "source-oriented strategy requires execute_source_oriented".into(),
         ));
     }
-
-    let live_bounds = plan.live_bounds(evaluation_time).map_err(ExecutionError)?;
-    let historical_bounds = plan
-        .historical_bounds(evaluation_time)
-        .map_err(ExecutionError)?;
 
     let total = Instant::now();
     let source_start = Instant::now();
@@ -327,9 +365,7 @@ pub fn execute(
             historical_records_matched: historical_records_scanned,
             bytes_sent_to_historical_source: binding_bytes_sent,
             bytes_received_from_historical_source: historical_bytes_received,
-            bytes_transferred: live_bytes
-                + binding_bytes_sent
-                + historical_bytes_received,
+            bytes_transferred: live_bytes + binding_bytes_sent + historical_bytes_received,
             source_requests: 2,
             total_sources_declared: 0,
             live_sources_declared: 0,

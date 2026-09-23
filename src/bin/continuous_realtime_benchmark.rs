@@ -18,7 +18,9 @@ use std::{
     time::{Duration, Instant},
 };
 
-const BASE_TIME_MS: u64 = 3_000_000;
+// Janus-QL OFFSET literals are seconds.  Continuous event timestamps are
+// milliseconds, so this must safely exceed the 30-day OFFSET in milliseconds.
+const BASE_TIME_MS: u64 = 3_000_000_000;
 #[derive(Parser)]
 struct Args {
     #[arg(long, default_value_t = 5)]
