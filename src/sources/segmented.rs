@@ -6,7 +6,12 @@
 //! intentional: BindJoin can reduce returned rows/bytes without pretending the
 //! underlying segmented store can skip unrelated subjects.
 use super::{HistoricalSource, Observation};
-use janus::storage::{segmented_storage::StreamingSegmentedStorage, util::StreamingConfig};
+use janus::storage::{
+    segmented_storage::{
+        AccessMetrics, StorageSizeAccounting, StreamingSegmentedStorage, SubjectAccessMode,
+    },
+    util::StreamingConfig,
+};
 use std::{
     collections::{HashMap, HashSet},
     fs, io,
@@ -20,6 +25,28 @@ pub struct SegmentedHistoricalSource {
 }
 
 impl SegmentedHistoricalSource {
+    /// Reopen an archive created by `deterministic`.  This is used by the
+    /// remote edge process; the archive remains Janus's on-disk storage.
+    pub fn open_existing(
+        base_path: impl AsRef<Path>,
+        record_count: usize,
+        segment_quads: usize,
+    ) -> io::Result<Self> {
+        let base_path = base_path.as_ref().to_path_buf();
+        let storage = StreamingSegmentedStorage::new(StreamingConfig {
+            max_batch_events: segment_quads as u64,
+            max_batch_age_seconds: 60,
+            max_batch_bytes: 64 * 1024 * 1024,
+            sparse_interval: 1_000,
+            entries_per_index_block: 1_024,
+            segment_base_path: base_path.to_string_lossy().into_owned(),
+        })?;
+        Ok(Self {
+            storage,
+            record_count,
+            base_path,
+        })
+    }
     #[allow(clippy::too_many_arguments)]
     pub fn deterministic(
         base_path: impl AsRef<Path>,
@@ -115,20 +142,70 @@ impl SegmentedHistoricalSource {
         &self.base_path
     }
 
+    pub fn storage_size_accounting(&self) -> io::Result<StorageSizeAccounting> {
+        self.storage.storage_size_accounting()
+    }
+
+    pub fn rows_with_metrics(
+        &self,
+        start: u64,
+        end: u64,
+    ) -> io::Result<(Vec<Observation>, AccessMetrics)> {
+        let (rows, metrics) = self.storage.query_half_open_with_metrics(start, end)?;
+        let dict = self.storage.get_dictionary().read().unwrap();
+        Ok((
+            rows.into_iter()
+                .map(|event| event.decode(&dict))
+                .map(|rdf| {
+                    let sensor = rdf.subject.clone();
+                    let value = rdf
+                        .object
+                        .parse::<f64>()
+                        .unwrap_or_else(|e| panic!("historical object is not numeric: {e}"));
+                    Observation { rdf, sensor, value }
+                })
+                .collect(),
+            metrics,
+        ))
+    }
+
     fn rows(&self, start: u64, end: u64) -> Vec<Observation> {
-        self.storage
-            .query_rdf_half_open(start, end)
+        self.rows_with_metrics(start, end)
             .unwrap_or_else(|e| panic!("Janus segmented-storage query failed: {e}"))
-            .into_iter()
-            .map(|rdf| {
-                let sensor = rdf.subject.clone();
-                let value = rdf
-                    .object
-                    .parse::<f64>()
-                    .unwrap_or_else(|e| panic!("historical object is not numeric: {e}"));
-                Observation { rdf, sensor, value }
-            })
-            .collect()
+            .0
+    }
+
+    pub fn rows_for_subjects(
+        &self,
+        start: u64,
+        end: u64,
+        subjects: &HashSet<String>,
+    ) -> io::Result<(Vec<Observation>, AccessMetrics)> {
+        self.rows_for_subjects_mode(start, end, subjects, SubjectAccessMode::Linear)
+    }
+    pub fn rows_for_subjects_mode(
+        &self,
+        start: u64,
+        end: u64,
+        subjects: &HashSet<String>,
+        mode: SubjectAccessMode,
+    ) -> io::Result<(Vec<Observation>, AccessMetrics)> {
+        let (rows, metrics) = self
+            .storage
+            .query_rdf_half_open_for_subjects_with_metrics_mode(start, end, subjects, mode)?;
+        Ok((
+            rows.into_iter()
+                .map(|rdf| {
+                    let sensor = rdf.subject.clone();
+                    let value = rdf
+                        .object
+                        .parse::<f64>()
+                        .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
+                    Ok(Observation { rdf, sensor, value })
+                })
+                .collect::<io::Result<Vec<_>>>()?,
+            metrics,
+        ))
     }
 }
 

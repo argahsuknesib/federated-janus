@@ -95,6 +95,15 @@ which is a 24-byte encoded record before filesystem/index overhead.
 
 Historical reads use Janus's half-open `query_rdf_half_open(start, end)` adapter and therefore preserve Janus-QL's half-open historical window semantics.
 
+## Remote historical edge experiment
+
+`historical_edge_service` can place that same `StreamingSegmentedStorage` behind
+a separate localhost HTTP process.  It deliberately exposes only `/window`,
+`/aggregate`, and `/aggregate-bound`; it is not a SPARQL endpoint.  The manual
+FetchAll, AggregatePushdown, and BindJoin plans retain their respective raw-row,
+all-sensor-aggregate, and live-bound-aggregate data flows.  No optimizer is
+introduced and the Janus storage/index implementation is unchanged.
+
 ## Indexing limitation
 
 The current segmented storage performs sparse/two-level **timestamp** indexing. It does not expose a subject/predicate inverted index for this benchmark.

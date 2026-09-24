@@ -1,3 +1,5 @@
+use crate::planner::LocalExecutionPlan;
+use crate::sources::SegmentedHistoricalSource;
 use crate::sources::SourceRegistry;
 use crate::{
     metrics::ExecutionMetrics,
@@ -5,6 +7,8 @@ use crate::{
     sources::{HistoricalSource, LiveSource, Observation},
     strategies,
 };
+use janus::storage::segmented_storage::AccessMetrics;
+use std::collections::{HashMap, HashSet};
 use std::time::{Duration, Instant};
 #[derive(Debug, Clone, PartialEq)]
 pub struct Anomaly {
@@ -42,6 +46,119 @@ pub fn execute_federated_continuous(
 pub struct ExecutionOutcome {
     pub results: Vec<Anomaly>,
     pub metrics: ExecutionMetrics,
+}
+/// Storage telemetry is separate from `operator_output_rows`: the latter is
+/// the cardinality of the historical aggregate operator, not storage rows.
+#[derive(Debug, Clone)]
+pub struct LocalPlanOutcome {
+    pub results: Vec<Anomaly>,
+    pub historical_averages: HashMap<String, f64>,
+    pub storage: AccessMetrics,
+    pub operator_output_rows: u64,
+    pub live_bindings: HashSet<String>,
+    pub historical_interval: (u64, u64),
+    pub historical_storage: Duration,
+    pub historical_operator: Duration,
+    pub coordinator: Duration,
+    pub total_execution: Duration,
+}
+
+/// Execute one explicit local plan against the real segmented Janus archive.
+pub fn execute_local_plan(
+    plan_kind: LocalExecutionPlan,
+    plan: &LogicalPlan,
+    live: &dyn LiveSource,
+    history: &SegmentedHistoricalSource,
+    evaluation_time: u64,
+) -> Result<LocalPlanOutcome, ExecutionError> {
+    let total_start = Instant::now();
+    let live_bounds = plan.live_bounds(evaluation_time).map_err(ExecutionError)?;
+    let historical_interval = plan
+        .historical_bounds(evaluation_time)
+        .map_err(ExecutionError)?;
+    let live_rows = live.materialize_live_window(live_bounds.0, live_bounds.1);
+    let live_bindings = live_rows
+        .iter()
+        .map(|row| row.sensor.clone())
+        .collect::<HashSet<_>>();
+    let storage_start = Instant::now();
+    let (historical_rows, storage) = match plan_kind {
+        LocalExecutionPlan::AggregatePushdown | LocalExecutionPlan::TimestampOnlyBindJoin => {
+            history
+                .rows_with_metrics(historical_interval.0, historical_interval.1)
+                .map_err(|e| ExecutionError(e.to_string()))?
+        }
+        LocalExecutionPlan::SubjectAwareBindJoin
+        | LocalExecutionPlan::SubjectAwareLinearBindJoin
+        | LocalExecutionPlan::SubjectAwareBinaryBindJoin => {
+            let mode = if plan_kind == LocalExecutionPlan::SubjectAwareBinaryBindJoin {
+                janus::storage::segmented_storage::SubjectAccessMode::Binary
+            } else {
+                janus::storage::segmented_storage::SubjectAccessMode::Linear
+            };
+            let (rows, metrics) = history
+                .rows_for_subjects_mode(
+                    historical_interval.0,
+                    historical_interval.1,
+                    &live_bindings,
+                    mode,
+                )
+                .map_err(|e| ExecutionError(e.to_string()))?;
+            if !metrics.subject_index_used {
+                return Err(ExecutionError("subject-aware local plan requires a valid index for every queried persisted segment".into()));
+            }
+            (rows, metrics)
+        }
+    };
+    let historical_storage = storage_start.elapsed();
+    let operator_start = Instant::now();
+    let aggregate_input = if plan_kind == LocalExecutionPlan::AggregatePushdown {
+        historical_rows
+    } else {
+        historical_rows
+            .into_iter()
+            .filter(|row| live_bindings.contains(&row.sensor))
+            .collect()
+    };
+    let mut sums = HashMap::<String, (f64, u64)>::new();
+    for row in aggregate_input {
+        let sum = sums.entry(row.sensor).or_insert((0.0, 0));
+        sum.0 += row.value;
+        sum.1 += 1;
+    }
+    let historical_averages = sums
+        .into_iter()
+        .map(|(sensor, (sum, count))| (sensor, sum / count as f64))
+        .collect::<HashMap<_, _>>();
+    let operator_output_rows = historical_averages.len() as u64;
+    let historical_operator = operator_start.elapsed();
+    let coordinator_start = Instant::now();
+    let mut results = live_rows
+        .into_iter()
+        .filter_map(|row| {
+            historical_averages
+                .get(&row.sensor)
+                .filter(|average| row.value > plan.condition.multiplier * **average)
+                .map(|average| Anomaly {
+                    sensor: row.sensor,
+                    current_value: row.value,
+                    historical_average: *average,
+                })
+        })
+        .collect::<Vec<_>>();
+    results.sort_by(|left, right| left.sensor.cmp(&right.sensor));
+    Ok(LocalPlanOutcome {
+        results,
+        historical_averages,
+        storage,
+        operator_output_rows,
+        live_bindings,
+        historical_interval,
+        historical_storage,
+        historical_operator,
+        coordinator: coordinator_start.elapsed(),
+        total_execution: total_start.elapsed(),
+    })
 }
 #[derive(Debug)]
 pub struct ExecutionError(pub String);

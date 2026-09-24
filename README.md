@@ -57,8 +57,6 @@ live WINDOW
                   HAVING
 ```
 
-Deprecated `DEFINE BASELINE` / `USING BASELINE` syntax is not used.
-
 ## Run
 
 Federated-Janus expects Janus as a sibling repository:

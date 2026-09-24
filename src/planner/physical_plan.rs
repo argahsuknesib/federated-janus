@@ -8,6 +8,17 @@ pub enum ExecutionStrategy {
     AggregateAllSources,
     LiveFirstSourceSelection,
 }
+
+/// Explicit local historical access plans for the subject-index correctness
+/// gate.  These are manual alternatives, never an optimizer choice.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum LocalExecutionPlan {
+    AggregatePushdown,
+    TimestampOnlyBindJoin,
+    SubjectAwareBindJoin,
+    SubjectAwareLinearBindJoin,
+    SubjectAwareBinaryBindJoin,
+}
 impl ExecutionStrategy {
     pub fn as_str(self) -> &'static str {
         match self {
